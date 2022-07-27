@@ -32,7 +32,7 @@ public class Point3D implements Drawable{
     }
 
     @Override
-    public void draw(Graphics g) {
+    public void draw2D(Graphics g) {
         // TODO Auto-generated method stub
         
     }
@@ -43,5 +43,11 @@ public class Point3D implements Drawable{
             return false;
         Point3D p = (Point3D) o;
         return x==p.x && y==p.y && z==p.z;
+    }
+
+    @Override
+    public void draw3D(Graphics g) {
+        // TODO Auto-generated method stub
+        
     }   
 }

@@ -1,10 +1,14 @@
 import java.awt.Color;
 import java.awt.Font;
+import java.awt.Point;
+import java.awt.Cursor;
+import java.awt.Toolkit;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Canvas;
 import java.awt.event.ActionEvent;
 import java.awt.event.KeyListener;
+import java.awt.event.MouseEvent;
 import java.awt.event.KeyEvent;
 import static java.lang.Character.*;
 import java.awt.image.BufferedImage;
@@ -13,7 +17,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-public class App extends Canvas implements KeyListener, Runnable
+import javax.swing.event.MouseInputListener;
+
+public class App extends Canvas implements MouseInputListener, KeyListener, Runnable
 {
     private final Color fillColor = Color.BLACK;
     private final Color lineColor = Color.WHITE;
@@ -23,9 +29,12 @@ public class App extends Canvas implements KeyListener, Runnable
 
     private static double currX;
     private static double currY;
+    private static double currZ;
     // in radians
     private static double currT;
-    private static int fov = 400;
+    private static double currS;
+    private static int lastMouseX;
+    private static int fov;
     private static String debugStr = "";
 
     private BufferedImage back;
@@ -39,7 +48,7 @@ public class App extends Canvas implements KeyListener, Runnable
     public App(){
 
         initObjs();
-        initKeys();
+        initInput();
 
         setBackground(fillColor);
 
@@ -48,7 +57,9 @@ public class App extends Canvas implements KeyListener, Runnable
         setVisible(true);
     }
 
-    private void initKeys(){
+    private void initInput(){
+        this.addMouseMotionListener(this);
+        //this.addMouseListener(this);
         this.addKeyListener(this);
 
         keys = new HashMap<>();
@@ -58,26 +69,33 @@ public class App extends Canvas implements KeyListener, Runnable
         keys.put(KeyEvent.VK_D, false);
         keys.put(KeyEvent.VK_Q, false);
         keys.put(KeyEvent.VK_E, false);
+        keys.put(KeyEvent.VK_SHIFT, false);
     }
 
     public void initObjs(){
+
+        currX = -200;
+        currY = 250;
+        currZ = 100;
+        currT = 0;//-Math.PI/2;
+        currS = 5;
+        fov = 100;
+
+        objs = new ArrayList<>();
 
         try{
 
             RectPrism pog = new RectPrism(0, 0, 0, 100, 100, 100);
 
-            currX = (width/2) - 20;
-            currY = (height/2) - 20;
-
-            objs = new ArrayList<>();
-
-            objs.add(new Line3D(100,200,0,300,700,0));
+            //objs.add(new Line3D(100,200,0,300,700,0));
+            objs.add(pog);
 
             for(int i=0; i < 8; i++){
-                Line3D l1 = new Line3D(i*100,200,0,300,700,0);
+                objs.add(new RectPrism(i*150, 0, 0, 50, 50, 500));
+                objs.add(new RectPrism(i*150, 500, 0, 50, 50, 500));
             }
-        }catch(Exception e){
-        
+        }catch(Throwable t){
+            System.out.println("Attempted to initialize bad object");
         }
     }
 
@@ -107,31 +125,39 @@ public class App extends Canvas implements KeyListener, Runnable
         // ----------------------------
 
         if(keys.get(KeyEvent.VK_W)){
-            currY+=-5*Math.cos(currT);
-            currX+=-5*Math.sin(currT);
+            currY+=-currS*Math.cos(currT);
+            currX+=currS*Math.sin(currT);
         }
 
         if(keys.get(KeyEvent.VK_S)){
-            currY+=5*Math.cos(currT);
-            currX+=5*Math.sin(currT);
+            currY+=currS*Math.cos(currT);
+            currX+=-currS*Math.sin(currT);
         }
 
         if(keys.get(KeyEvent.VK_A)){
-            currX+=-5*Math.cos(currT);
-            currY+=5*Math.sin(currT);
+            currX+=currS*Math.cos(currT);
+            currY+=currS*Math.sin(currT);
         }
         
         if(keys.get(KeyEvent.VK_D)){
-            currX+=5*Math.cos(currT);
-            currY+=-5*Math.sin(currT);
+            currX+=-currS*Math.cos(currT);
+            currY+=-currS*Math.sin(currT);
         }
          
         if(keys.get(KeyEvent.VK_Q)){
-            currT+=-Math.PI/100;
+            currT+=Math.PI/100;
         }
     
         if(keys.get(KeyEvent.VK_E)){
-            currT+=Math.PI/100;
+            currT+=-Math.PI/100;
+        }
+
+        if(keys.get(KeyEvent.VK_SHIFT)){
+            currS=30;
+            fov=100;
+        }else{
+            currS=5;
+            fov=400;
         }
 
         // ----------------------------
@@ -141,9 +167,9 @@ public class App extends Canvas implements KeyListener, Runnable
         graphToBack.setColor(lineColor);
 
         for(Drawable d : objs)
-            d.draw(graphToBack);
+            d.draw3D(graphToBack);
 
-        graphToBack.fillOval((width/2) - 20, (height/2) - 20, 40, 40);
+        graphToBack.fillOval((width/2) - 5, (height/2) - 5, 10, 10);
 
         debugStr =  "X : "+currX+"\n"+
                     "Y : "+currY+"\n"+
@@ -175,6 +201,9 @@ public class App extends Canvas implements KeyListener, Runnable
     public static double currY(){
         return currY;
     }
+    public static double currZ(){
+        return currZ;
+    }
     public static double currT(){
         return currT;
     }
@@ -191,7 +220,7 @@ public class App extends Canvas implements KeyListener, Runnable
         {
             while(true)
             {
-                Thread.currentThread().sleep(1);
+                Thread.currentThread().sleep(5);
                 repaint();
             }
         }catch(Exception e)
@@ -203,6 +232,46 @@ public class App extends Canvas implements KeyListener, Runnable
     public void keyTyped(KeyEvent e) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
+        System.out.println("Clicked"+e.getX()+" "+e.getY());
+    }
+
+    @Override
+    public void mousePressed(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+        //System.out.println(e.getX()+" "+e.getY());
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+        System.out.println("Dragged"+e.getX()+" "+e.getY());
+        
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+        currT += (lastMouseX-e.getX()) * Math.PI/1000;
+        lastMouseX = e.getX();
     }
 }
 
