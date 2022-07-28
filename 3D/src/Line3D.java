@@ -100,9 +100,9 @@ public class Line3D implements Drawable{
         double a = -App.currT();
 
         double relx1 = x1 - App.currX();
-        double rely1 = y1 - App.currY();
+        double rely1 = z1 - App.currY();
         double relx2 = x2 - App.currX();
-        double rely2 = y2 - App.currY();
+        double rely2 = z2 - App.currY();
 
         double rotx1 = (relx1*Math.cos(a) - rely1*Math.sin(a));
         double roty1 = (relx1*Math.sin(a) + rely1*Math.cos(a));
@@ -122,7 +122,9 @@ public class Line3D implements Drawable{
     @Override
     public void draw3D(Graphics g) {
         
-        double a = -App.currT();
+        double c = -App.currT();
+        double a = App.currU();
+        double b = App.currV();
         double fov = App.fov();
 
         double relx1 = x1 - App.currX();
@@ -132,18 +134,49 @@ public class Line3D implements Drawable{
         double rely2 = y2 - App.currY();
         double relz2 = z2 - App.currZ();
 
-        double rotx1 = (relx1*Math.cos(a) - rely1*Math.sin(a));
-        double roty1 = (relx1*Math.sin(a) + rely1*Math.cos(a));
-        double rotx2 = (relx2*Math.cos(a) - rely2*Math.sin(a));
-        double roty2 = (relx2*Math.sin(a) + rely2*Math.cos(a));
+        // double rotx1 = (relx1*Math.cos(c) - rely1*Math.sin(c));
+        // double roty1 = (relx1*Math.sin(c) + rely1*Math.cos(c));
+        // double rotx2 = (relx2*Math.cos(c) - rely2*Math.sin(c));
+        // double roty2 = (relx2*Math.sin(c) + rely2*Math.cos(c));
+
+        double rotx1 = (
+            relx1*Math.cos(b)*Math.cos(c) + 
+            rely1*(Math.sin(a)*Math.sin(b)*Math.cos(c) - Math.cos(a)*Math.sin(c)) + 
+            relz1*(Math.cos(a)*Math.sin(b)*Math.cos(c) + Math.sin(a)*Math.sin(c))
+        );
+        double roty1 = (
+            relx1*Math.cos(b)*Math.sin(c) + 
+            rely1*(Math.sin(a)*Math.sin(b)*Math.sin(c) + Math.cos(a)*Math.cos(c)) +
+            relz1*(Math.cos(a)*Math.sin(b)*Math.sin(c) - Math.sin(a)*Math.cos(c))
+        );
+        double rotz1 = (
+            relx1*-Math.sin(b) + 
+            rely1*Math.sin(a)*Math.cos(b) +
+            relz1*Math.cos(a)*Math.cos(b)
+        );
+        double rotx2 = (
+            relx2*Math.cos(b)*Math.cos(c) + 
+            rely2*(Math.sin(a)*Math.sin(b)*Math.cos(c) - Math.cos(a)*Math.sin(c)) + 
+            relz2*(Math.cos(a)*Math.sin(b)*Math.cos(c) + Math.sin(a)*Math.sin(c))
+        );
+        double roty2 = (
+            relx2*Math.cos(b)*Math.sin(c) + 
+            rely2*(Math.sin(a)*Math.sin(b)*Math.sin(c) + Math.cos(a)*Math.cos(c)) +
+            relz2*(Math.cos(a)*Math.sin(b)*Math.sin(c) - Math.sin(a)*Math.cos(c))
+        );
+        double rotz2 = (
+            relx2*-Math.sin(b) + 
+            rely2*Math.sin(a)*Math.cos(b) +
+            relz2*Math.cos(a)*Math.cos(b)
+        );
 
         if(roty1 > 0 || roty2 > 0)
             return;
 
-        double visX1 = rotx1 * fov / roty1;
-        double visZ1 = relz1 * fov / roty1;
-        double visX2 = rotx2 * fov / roty2;
-        double visZ2 = relz2 * fov / roty2;
+        double visx1 = rotx1 * fov / roty1;
+        double visy1 = rotz1 * fov / roty1;
+        double visx2 = rotx2 * fov / roty2;
+        double visy2 = rotz2 * fov / roty2;
 
         if(ID==0){
             App.drawString(g, 
@@ -152,15 +185,15 @@ public class Line3D implements Drawable{
                 "relz1: "+relz1+"\n"+
                 "rotx1: "+rotx1+"\n"+
                 "roty1: "+roty1+"\n"+
-                "visZ1: "+visZ1+"\n"+
-                "visX1: "+visX1+"\n", 1000, 0);
+                "visy1: "+visy1+"\n"+
+                "visx1: "+visx1+"\n", 1000, 0);
         }
 
         g.drawLine(
-            (int) (visX1+App.width/2), 
-            (int) (visZ1+App.height/2), 
-            (int) (visX2+App.width/2), 
-            (int) (visZ2+App.height/2)
+            (int) (visx1+App.width/2), 
+            (int) (visy1+App.height/2), 
+            (int) (visx2+App.width/2), 
+            (int) (visy2+App.height/2)
         );
     }
 }

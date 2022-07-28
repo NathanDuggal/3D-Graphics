@@ -4,13 +4,17 @@ import java.awt.Cursor;
 import java.awt.Point;
 import java.awt.image.BufferedImage;
 import java.awt.Toolkit;
+import java.awt.GraphicsEnvironment;
+import java.awt.GraphicsDevice;
 
 public class Main extends JFrame
 {
-  public static final int WIDTH = 1920;
-  public static final int HEIGHT = 1080;
+  public static final int WIDTH = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
+  public static final int HEIGHT =(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
 
   public static JFrame main;
+
+  static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
   public Main()
   {
@@ -22,6 +26,8 @@ public class Main extends JFrame
 
     getContentPane().add(app);
     setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    setUndecorated(true); 
     setVisible(true);
   }
 
@@ -38,5 +44,13 @@ public class Main extends JFrame
 
     // Set the blank cursor to the JFrame.
     main.getContentPane().setCursor(blankCursor);
+  }
+
+  public static void exit(){
+    device.setFullScreenWindow(null);
+  }
+  public static void fullScreen(){
+    System.out.println("Fullscreen?");
+    device.setFullScreenWindow(main);
   }
 }

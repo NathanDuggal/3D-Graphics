@@ -22,7 +22,7 @@ import javax.swing.event.MouseInputListener;
 public class App extends Canvas implements MouseInputListener, KeyListener, Runnable
 {
     private final Color fillColor = Color.BLACK;
-    private final Color lineColor = Color.WHITE;
+    private final Color lineColor = Color.WHITE;//new Color(255,0,255);
 
     public static final int width = Main.WIDTH;
     public static final int height = Main.HEIGHT;
@@ -30,10 +30,14 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private static double currX;
     private static double currY;
     private static double currZ;
-    // in radians
-    private static double currT;
     private static double currS;
-    private static int lastMouseX;
+    // in radians, angles around the z, y, and x axes respectively
+    private static double currT;
+    private static double currU;
+    private static double currV;
+
+    private static int lastMouseX = 0;
+    private static int lastMouseY = 0;
     private static int fov;
     private static String debugStr = "";
 
@@ -67,8 +71,15 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         keys.put(KeyEvent.VK_A, false);
         keys.put(KeyEvent.VK_S, false);
         keys.put(KeyEvent.VK_D, false);
-        keys.put(KeyEvent.VK_Q, false);
-        keys.put(KeyEvent.VK_E, false);
+        keys.put(KeyEvent.VK_T, false);
+        keys.put(KeyEvent.VK_U, false);
+        keys.put(KeyEvent.VK_V, false);
+        keys.put(KeyEvent.VK_ESCAPE, false);
+        keys.put(KeyEvent.VK_F1, false);
+        keys.put(KeyEvent.VK_LEFT, false);
+        keys.put(KeyEvent.VK_RIGHT, false);
+        keys.put(KeyEvent.VK_UP, false);
+        keys.put(KeyEvent.VK_DOWN, false);
         keys.put(KeyEvent.VK_SHIFT, false);
     }
 
@@ -77,7 +88,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         currX = -200;
         currY = 250;
         currZ = 100;
-        currT = 0;//-Math.PI/2;
+        currT = Math.PI/4;//-Math.PI/2;
+        currU = 0;
+        currV = 0; // should not change the roll?
         currS = 5;
         fov = 100;
 
@@ -100,25 +113,6 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     }
 
     public void update(Graphics window){
-        paint(window);
-    }
-
-    public void paint(Graphics window){
-	
-        //set up the double buffering to make the game animation nice and smooth
-        Graphics2D twoDGraph = (Graphics2D)window;
-
-        //take a snap shop of the current screen and same it as an image
-        //that is the exact same width and height as the current screen
-        if(back==null)
-        back = (BufferedImage)(createImage(width,height));
-
-        //create a graphics reference to the back ground image
-        //we will draw all changes on the background image
-        Graphics graphToBack = back.createGraphics();
-        
-        graphToBack.setColor(fillColor);
-        graphToBack.fillRect(0,0,width,height);
 
         // ----------------------------
         // Key Detection --------------
@@ -143,13 +137,44 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currX+=-currS*Math.cos(currT);
             currY+=-currS*Math.sin(currT);
         }
+
+        if(keys.get(KeyEvent.VK_T)){
+            currT=0;
+        }
+        if(keys.get(KeyEvent.VK_U)){
+            currU=0;
+        }
+        if(keys.get(KeyEvent.VK_V)){
+            currV=0;
+        }
+        if(keys.get(KeyEvent.VK_ESCAPE)){
+            Main.exit();
+        }
+        if(keys.get(KeyEvent.VK_F1)){
+            Main.fullScreen();
+        }
+        
          
-        if(keys.get(KeyEvent.VK_Q)){
+        if(keys.get(KeyEvent.VK_LEFT)){
             currT+=Math.PI/100;
+            // currU+=(Math.PI/100)*Math.cos(currT);
+            // currV+=-(Math.PI/100)*Math.sin(currT);
         }
     
-        if(keys.get(KeyEvent.VK_E)){
+        if(keys.get(KeyEvent.VK_RIGHT)){
             currT+=-Math.PI/100;
+            // currU+=-(Math.PI/100)*Math.cos(currT);
+            // currV+=(Math.PI/100)*Math.sin(currT);
+        }
+
+        if(keys.get(KeyEvent.VK_UP)){
+            currU+=(Math.PI/100)*Math.cos(currT);
+            currV+=(Math.PI/100)*Math.sin(currT);
+        }
+    
+        if(keys.get(KeyEvent.VK_DOWN)){
+            currU+=-(Math.PI/100)*Math.cos(currT);
+            currV+=-(Math.PI/100)*Math.sin(currT);
         }
 
         if(keys.get(KeyEvent.VK_SHIFT)){
@@ -159,6 +184,26 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currS=5;
             fov=400;
         }
+
+        // Should always be last
+        paint(window);
+    }
+
+    public void paint(Graphics window){
+	
+        // set up the double buffering to make the animation nice and smooth
+        Graphics2D twoDGraph = (Graphics2D)window;
+
+        // take a snap shop of the current screen and same it as an image
+        // that is the exact same width and height as the current screen
+        if(back==null) back = (BufferedImage)(createImage(width,height));
+
+        // create a graphics reference to the back ground image
+        // we will draw all changes on the background image
+        Graphics graphToBack = back.createGraphics();
+        
+        graphToBack.setColor(fillColor);
+        graphToBack.fillRect(0,0,width,height);
 
         // ----------------------------
         // Drawing Stuff --------------
@@ -173,7 +218,10 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
         debugStr =  "X : "+currX+"\n"+
                     "Y : "+currY+"\n"+
-                    "T : "+currT%(2*Math.PI)+"\n";
+                    "Z : "+currZ+"\n"+
+                    "T : "+currT%(2*Math.PI)+"\n"+
+                    "U : "+currU%(2*Math.PI)+"\n"+
+                    "V : "+currV%(2*Math.PI)+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
         drawString(graphToBack, debugStr, 10, 10);
@@ -206,6 +254,12 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     }
     public static double currT(){
         return currT;
+    }
+    public static double currU(){
+        return currU;
+    }
+    public static double currV(){
+        return currV;
     }
     public static int fov(){
         return fov;
@@ -272,6 +326,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     public void mouseMoved(MouseEvent e) {
         currT += (lastMouseX-e.getX()) * Math.PI/1000;
         lastMouseX = e.getX();
+        currU += (lastMouseY-e.getY()) * Math.PI/1000 * Math.cos(currT);
+        currV += (lastMouseY-e.getY()) * Math.PI/1000 * Math.sin(currT);
+        lastMouseY = e.getY();
     }
 }
 

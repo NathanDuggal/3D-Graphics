@@ -15,8 +15,7 @@
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "Main",
-            "projectName": "Graphics_698accb8",
-            "vmArgs": "--module-path D:/Users/ndugg/Downloads/ejml-0.41-libs --add-modules ejml-all"
+            "projectName": "3D_f460f28"
         }
     ]
 }
