@@ -123,8 +123,9 @@ public class Line3D implements Drawable{
     public void draw3D(Graphics g) {
         
         double c = -App.currT();
-        double a = App.currU();
-        double b = App.currV();
+        double b = App.currU() * Math.sin(App.currT());
+        double a = App.currU() * Math.cos(App.currT());
+
         double fov = App.fov();
 
         double relx1 = x1 - App.currX();
@@ -170,7 +171,15 @@ public class Line3D implements Drawable{
             relz2*Math.cos(a)*Math.cos(b)
         );
 
-        if(roty1 > 0 || roty2 > 0)
+        // double rotx1;
+        // double roty1;
+        // double rotz1;
+        // double rotx2;
+        // double roty2;
+        // double rotz2;
+
+
+        if(roty1 > 0 || roty2 > 0 && ID != 0)
             return;
 
         double visx1 = rotx1 * fov / roty1;
