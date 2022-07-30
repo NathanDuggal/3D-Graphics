@@ -1,6 +1,6 @@
 import java.awt.Graphics;
 
-public class Line3D implements Drawable{
+public class Line implements Drawable{
 
     private static int linesRem = 0;
     private static int IDNum = 0;
@@ -8,7 +8,7 @@ public class Line3D implements Drawable{
     private final int ID;
     private final int x1,y1,z1,x2,y2,z2;
     private final Point3D p1,p2;
-    public Line3D(int x1, int y1, int z1, int x2,int y2, int z2) throws Exception{
+    public Line(int x1, int y1, int z1, int x2,int y2, int z2) throws Exception{
         this.x1=x1;
         this.y1=y1;
         this.z1=z1;
@@ -20,7 +20,7 @@ public class Line3D implements Drawable{
         checkPoints();
         ID=IDNum++;
     }
-    public Line3D(Point3D p1, Point3D p2) throws Exception{
+    public Line(Point3D p1, Point3D p2) throws Exception{
         this.p1=p1;
         this.p2=p2;
         x1=p1.x();
@@ -70,6 +70,11 @@ public class Line3D implements Drawable{
         }
     }
 
+    @Override
+    public String toString(){
+        return "Line( "+p1+" "+p2+" )";
+    }
+
     // bad bad bad 
     @Override
     public int hashCode(){
@@ -77,18 +82,13 @@ public class Line3D implements Drawable{
     }
 
     @Override
-    public String toString(){
-        return "Line( "+p1+" "+p2+" )";
-    }
-
-    @Override
     public boolean equals(Object o){
-        if(o==null || !(o instanceof Line3D))
+        if(o==null || !(o instanceof Line))
             return false;
-        Line3D l = (Line3D) o;
+        Line l = (Line) o;
 
-        if((p1.equals(l.p1) && p2.equals(l.p2)) || (p1.equals(l.p2) && p2.equals(l.p1)))
-            System.out.println("Equal lines detected "+(++linesRem));
+        // if((p1.equals(l.p1) && p2.equals(l.p2)) || (p1.equals(l.p2) && p2.equals(l.p1)))
+        //     System.out.println("Equal lines detected "+(++linesRem));
 
         return (p1.equals(l.p1) && p2.equals(l.p2)) || (p1.equals(l.p2) && p2.equals(l.p1));
     }
@@ -178,8 +178,7 @@ public class Line3D implements Drawable{
         // double roty2;
         // double rotz2;
 
-
-        if(roty1 > 0 || roty2 > 0 && ID != 0)
+        if(ID != 0 && roty1 > 0 || roty2 > 0)
             return;
 
         double visx1 = rotx1 * fov / roty1;

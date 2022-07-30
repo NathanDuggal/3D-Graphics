@@ -7,7 +7,7 @@ import java.awt.Toolkit;
 import java.awt.GraphicsEnvironment;
 import java.awt.GraphicsDevice;
 
-public class Main extends JFrame
+public class FPSv1 extends JFrame
 {
   public static final int WIDTH = (int)Toolkit.getDefaultToolkit().getScreenSize().getWidth();
   public static final int HEIGHT =(int)Toolkit.getDefaultToolkit().getScreenSize().getHeight();
@@ -16,7 +16,7 @@ public class Main extends JFrame
 
   static GraphicsDevice device = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
 
-  public Main()
+  public FPSv1()
   {
     super("3D Graphics");
     setSize(WIDTH,HEIGHT);
@@ -33,7 +33,7 @@ public class Main extends JFrame
 
   public static void main( String args[] )
   {
-    main = new Main();
+    main = new FPSv1();
 
     // Transparent 16 x 16 pixel cursor image.
     BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);

@@ -25,28 +25,34 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private final Color fillColor = Color.BLACK;
     private final Color lineColor = Color.WHITE;//new Color(255,0,255);
 
-    public static final int width = Main.WIDTH;
-    public static final int height = Main.HEIGHT;
+    public static final int width = FPSv1.WIDTH;
+    public static final int height = FPSv1.HEIGHT;
 
     private static double currX;
     private static double currY;
     private static double currZ;
     private static double currS;
-    // in radians, angles around the z, y, and x axes respectively
+    // In radians
     private static double currT;
     private static double currU;
     private static double currV;
 
-    private static int lastMouseX = 0;
-    private static int lastMouseY = 0;
     private static int fov;
     private static String debugStr = "";
+
+    private static int frameCount = 0;
 
     private BufferedImage back;
 
     // KeyEvents are represented as Integers
     private HashMap<Integer,Boolean> keys;
+
+    // To fascilitate mouse controls
     private Robot r;
+    private boolean xReset;
+    private boolean yReset;
+    private static int lastMouseX = 0;
+    private static int lastMouseY = 0;
 
     // All non-player Objects
     private ArrayList<Drawable> objs;
@@ -93,8 +99,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         }catch(Exception e){
             System.out.println("Robot init failed");
         }
-        r.mouseMove(width/2, height/2);
-        
+        xReset=false;
+        yReset=false;
+        //r.mouseMove(width/2, height/2);
     }
 
     public void initObjs(){
@@ -114,7 +121,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
             //objs.add(new Line3D(100,200,0,300,700,0));
             
-            objs.add(new Line3D(new Point3D(-1000000,0,0), new Point3D(1000000,0,0)));
+            objs.add(new Line(new Point3D(-1000000,0,0), new Point3D(1000000,0,0)));
             objs.add(new RectPrism(0, 0, 0, 100, 100, 100));
 
             for(int i=0; i < 8; i++){
@@ -139,6 +146,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currU = -Math.PI/2;
         if(currU > Math.PI/2)
             currU = Math.PI/2;
+    
         // currV=currV%2*Math.PI;
 
         // ----------------------------
@@ -175,10 +183,10 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currV=0;
         }
         if(keys.get(KeyEvent.VK_ESCAPE)){
-            Main.exit();
+            FPSv1.exit();
         }
         if(keys.get(KeyEvent.VK_F1)){
-            Main.fullScreen();
+            FPSv1.fullScreen();
         }
         if(keys.get(KeyEvent.VK_ENTER)){
             objs.add(new RectPrism((int)currX, (int)currY, (int)currZ, 100, 100, 100));
@@ -260,7 +268,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
         graphToBack.setColor(lineColor);
         for(Drawable d : objs){
-            if(d instanceof Line3D) graphToBack.setColor(Color.RED);
+            if(d instanceof Line) graphToBack.setColor(Color.RED);
             d.draw3D(graphToBack);
             graphToBack.setColor(lineColor);
         }
@@ -271,8 +279,8 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
                     "Y : "+currY+"\n"+
                     "Z : "+currZ+"\n"+
                     "T : "+currT+"\n"+
-                    "U : "+currU+"\n"+
-                    "V : "+currV+"\n";
+                    "U : "+currU * Math.sin(currT)+"\n"+
+                    "V : "+currU * Math.cos(currT)+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
         drawString(graphToBack, debugStr, 10, 10);
@@ -326,6 +334,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             while(true)
             {
                 Thread.currentThread().sleep(5);
+                frameCount=++frameCount%100;
                 repaint();
             }
         }catch(Exception e)
@@ -375,13 +384,30 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
     @Override
     public void mouseMoved(MouseEvent e) {
-        currT += (lastMouseX-e.getX()) * Math.PI/500;
-        lastMouseX = e.getX();
-        currU += (lastMouseY-e.getY()) * Math.PI/500;
-        // currV += (lastMouseY-e.getY()) * Math.PI/1000 * Math.sin(currT);
-        lastMouseY = e.getY();
 
-        //if(Main.main.isFocused()) r.mouseMove(width/2,height/2);
+        if(e.getX() > 0 && e.getX() < width-1 && !xReset){
+            currT += (lastMouseX-e.getX()) * Math.PI/1000;
+            lastMouseX = e.getX();
+        }else if(xReset){
+            xReset = false;   
+        }else {
+            xReset = true;
+            r.mouseMove(width/2, e.getY());
+            lastMouseX = width/2;
+        }
+        if(e.getY() > 0 && e.getY() < height-1 && !yReset){
+            currU += (lastMouseY-e.getY()) * Math.PI/1000;
+            // currV += (lastMouseY-e.getY()) * Math.PI/1000 * Math.sin(currT);
+            lastMouseY = e.getY();
+        }else if(yReset){
+            yReset = false;
+        }else{
+            yReset = true;
+            r.mouseMove(e.getX(), height/2);
+            lastMouseY = height/2;
+        }
+
+        // if(FPSv1.main.isFocused()) r.mouseMove(width/2,height/2);
     }
 }
 

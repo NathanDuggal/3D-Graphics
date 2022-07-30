@@ -5,11 +5,11 @@ import javax.print.attribute.standard.JobStateReasons;
 
 public class Quad implements Drawable {
 
-    private final Line3D[] lines;
+    private final Line[] lines;
     private final Point3D[] points;
 
-    public Quad(Line3D l1, Line3D l2, Line3D l3, Line3D l4) throws ExceptionInInitializerError, Exception{
-        lines = new Line3D[]{ l1, l2, l3, l4 };
+    public Quad(Line l1, Line l2, Line l3, Line l4) throws ExceptionInInitializerError, Exception{
+        lines = new Line[]{ l1, l2, l3, l4 };
 
         // make sure no duplicate lines
         for(int i=0; i<lines.length; i++){
@@ -36,15 +36,15 @@ public class Quad implements Drawable {
             }
         }
 
-        lines = new Line3D[]{
-            new Line3D(p1, p2),
-            new Line3D(p2, p3),
-            new Line3D(p3, p4),
-            new Line3D(p4, p1)
+        lines = new Line[]{
+            new Line(p1, p2),
+            new Line(p2, p3),
+            new Line(p3, p4),
+            new Line(p4, p1)
         };
     }
 
-    public Line3D[] lines(){
+    public Line[] lines(){
         return lines;
     }
 
@@ -59,7 +59,7 @@ public class Quad implements Drawable {
 
         for(Point3D p : points){
             int s=0;
-            for(Line3D l : lines){
+            for(Line l : lines){
                 if(l.containsPoint(p)) s++;
             }
             if(s != 2) throw new Exception();
@@ -71,7 +71,7 @@ public class Quad implements Drawable {
 
     @Override
     public void draw2D(Graphics g) {
-        for(Line3D l : lines)
+        for(Line l : lines)
             l.draw2D(g);
     }
 

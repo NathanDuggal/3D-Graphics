@@ -5,7 +5,7 @@ public class RectPrism implements Drawable{
 
     private final Point3D[] points;
     private final Quad[] faces;
-    private final Line3D[] lines;
+    private final Line[] lines;
     private final int w,l,h;
 
     // Ez init?
@@ -40,32 +40,32 @@ public class RectPrism implements Drawable{
             System.out.println("Attempted to create bad line");
         }
 
-        HashSet<Line3D> linesSet = new HashSet<>();
+        HashSet<Line> linesSet = new HashSet<>();
 
         for(Quad q : faces){
-            for(Line3D li : q.lines()){
+            for(Line li : q.lines()){
                 linesSet.add(li);
             }
         }
 
-        Line3D[] tempLines = new Line3D[12];
+        Line[] tempLines = new Line[12];
 
         lines = linesSet.toArray(tempLines);
 
-        System.out.println("Prism successfully initialized with "+lines.length+" lines");
+        // System.out.println("Prism successfully initialized with "+lines.length+" lines");
     }
 
 
     @Override
     public void draw2D(Graphics g) {
-        for(Line3D l : lines)
+        for(Line l : lines)
             l.draw2D(g);
     }
 
 
     @Override
     public void draw3D(Graphics g) {
-        for(Line3D l : lines)
+        for(Line l : lines)
             l.draw3D(g);
     }
 }
