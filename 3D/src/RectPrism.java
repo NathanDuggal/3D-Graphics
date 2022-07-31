@@ -6,13 +6,23 @@ public class RectPrism implements Drawable{
     private final Point3D[] points;
     private final Quad[] faces;
     private final Line[] lines;
-    private final int w,l,h;
+    private final int x,y,z;
+    public final int ID;
+    private static int IDnum;
 
     // Ez init?
-    public RectPrism(int x, int y, int z, int l, int w, int h){
-        this.w=w;
-        this.l=l;
-        this.h=h;
+    public RectPrism(int x, int y, int z, int l, int w, int h, RectPrism o){
+
+        if(o != null){
+            this.x=x+o.x;
+            this.y=x+o.y;
+            this.z=x+o.z;
+        }else{
+            this.x=x;
+            this.y=y;
+            this.z=z;
+        }
+
         points = new Point3D[]{
             new Point3D(x, y, z),
 
@@ -52,7 +62,20 @@ public class RectPrism implements Drawable{
 
         lines = linesSet.toArray(tempLines);
 
+
+        if(o != null) ID=o.ID;
+        else ID=IDnum++;
+        
         // System.out.println("Prism successfully initialized with "+lines.length+" lines");
+    }
+
+    public RectPrism(int x, int y, int z, int l, int w, int h){
+        this(x, y, z, l, w, h, null);
+    }
+
+    @Override
+    public String toString(){
+        return "RectPrism"+ID;
     }
 
 
@@ -67,5 +90,7 @@ public class RectPrism implements Drawable{
     public void draw3D(Graphics g) {
         for(Line l : lines)
             l.draw3D(g);
+        for(Quad q : faces)
+            q.draw3D(g);
     }
 }

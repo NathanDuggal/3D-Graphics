@@ -1,13 +1,14 @@
+import java.awt.Color;
 import java.awt.Graphics;
+import static java.lang.Math.*;
 
 public class Line implements Drawable{
 
-    private static int linesRem = 0;
     private static int IDNum = 0;
 
-    private final int ID;
-    private final int x1,y1,z1,x2,y2,z2;
-    private final Point3D p1,p2;
+    public final int ID;
+    public final int x1,y1,z1,x2,y2,z2;
+    public final Point3D p1,p2;
     public Line(int x1, int y1, int z1, int x2,int y2, int z2) throws Exception{
         this.x1=x1;
         this.y1=y1;
@@ -23,40 +24,14 @@ public class Line implements Drawable{
     public Line(Point3D p1, Point3D p2) throws Exception{
         this.p1=p1;
         this.p2=p2;
-        x1=p1.x();
-        y1=p1.y();
-        z1=p1.z();
-        x2=p2.x();
-        y2=p2.y();
-        z2=p2.z();
+        x1=p1.x;
+        y1=p1.y;
+        z1=p1.z;
+        x2=p2.x;
+        y2=p2.y;
+        z2=p2.z;
         checkPoints();
         ID=IDNum++;
-    }
-
-    // idk if all this is even necessary if all vars were public finals 
-    public int x1(){
-        return x1;
-    }
-    public int x2(){
-        return x2;
-    }
-    public int y1(){
-        return y1;
-    }
-    public int y2(){
-        return y2;
-    }
-    public int z1(){
-        return z1;
-    }
-    public int z2(){
-        return z2;
-    }
-    public Point3D p1(){
-        return p1;
-    }
-    public Point3D p2(){
-        return p2;
     }
 
     public boolean containsPoint(Point3D p){
@@ -65,14 +40,14 @@ public class Line implements Drawable{
 
     private void checkPoints() throws Exception{
         if(p1.equals(p2)){
-            System.out.println("Line is gone" + p1+p2);
+            System.out.println("Attempted to initialize line with identical points" + p1+p2);
             throw new Exception("Points cannot be the same");
         }
     }
 
     @Override
     public String toString(){
-        return "Line( "+p1+" "+p2+" )";
+        return "Line"+ID;
     }
 
     // bad bad bad 
@@ -104,10 +79,10 @@ public class Line implements Drawable{
         double relx2 = x2 - App.currX();
         double rely2 = z2 - App.currY();
 
-        double rotx1 = (relx1*Math.cos(a) - rely1*Math.sin(a));
-        double roty1 = (relx1*Math.sin(a) + rely1*Math.cos(a));
-        double rotx2 = (relx2*Math.cos(a) - rely2*Math.sin(a));
-        double roty2 = (relx2*Math.sin(a) + rely2*Math.cos(a));
+        double rotx1 = (relx1*cos(a) - rely1*sin(a));
+        double roty1 = (relx1*sin(a) + rely1*cos(a));
+        double rotx2 = (relx2*cos(a) - rely2*sin(a));
+        double roty2 = (relx2*sin(a) + rely2*cos(a));
 
         // xcosT - ysinT , xsinT + ycosT
 
@@ -123,8 +98,8 @@ public class Line implements Drawable{
     public void draw3D(Graphics g) {
         
         double c = -App.currT();
-        double b = App.currU() * Math.sin(App.currT());
-        double a = App.currU() * Math.cos(App.currT());
+        double b = App.currU() * sin(App.currT());
+        double a = App.currU() * cos(App.currT());
 
         double fov = App.fov();
 
@@ -135,40 +110,40 @@ public class Line implements Drawable{
         double rely2 = y2 - App.currY();
         double relz2 = z2 - App.currZ();
 
-        // double rotx1 = (relx1*Math.cos(c) - rely1*Math.sin(c));
-        // double roty1 = (relx1*Math.sin(c) + rely1*Math.cos(c));
-        // double rotx2 = (relx2*Math.cos(c) - rely2*Math.sin(c));
-        // double roty2 = (relx2*Math.sin(c) + rely2*Math.cos(c));
+        // double rotx1 = (relx1*cos(c) - rely1*sin(c));
+        // double roty1 = (relx1*sin(c) + rely1*cos(c));
+        // double rotx2 = (relx2*cos(c) - rely2*sin(c));
+        // double roty2 = (relx2*sin(c) + rely2*cos(c));
 
         double rotx1 = (
-            relx1*Math.cos(b)*Math.cos(c) + 
-            rely1*(Math.sin(a)*Math.sin(b)*Math.cos(c) - Math.cos(a)*Math.sin(c)) + 
-            relz1*(Math.cos(a)*Math.sin(b)*Math.cos(c) + Math.sin(a)*Math.sin(c))
+            relx1*cos(b)*cos(c) + 
+            rely1*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c)) + 
+            relz1*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
         );
         double roty1 = (
-            relx1*Math.cos(b)*Math.sin(c) + 
-            rely1*(Math.sin(a)*Math.sin(b)*Math.sin(c) + Math.cos(a)*Math.cos(c)) +
-            relz1*(Math.cos(a)*Math.sin(b)*Math.sin(c) - Math.sin(a)*Math.cos(c))
+            relx1*cos(b)*sin(c) + 
+            rely1*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
+            relz1*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c))
         );
         double rotz1 = (
-            relx1*-Math.sin(b) + 
-            rely1*Math.sin(a)*Math.cos(b) +
-            relz1*Math.cos(a)*Math.cos(b)
+            relx1*-sin(b) + 
+            rely1*sin(a)*cos(b) +
+            relz1*cos(a)*cos(b)
         );
         double rotx2 = (
-            relx2*Math.cos(b)*Math.cos(c) + 
-            rely2*(Math.sin(a)*Math.sin(b)*Math.cos(c) - Math.cos(a)*Math.sin(c)) + 
-            relz2*(Math.cos(a)*Math.sin(b)*Math.cos(c) + Math.sin(a)*Math.sin(c))
+            relx2*cos(b)*cos(c) + 
+            rely2*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c)) + 
+            relz2*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
         );
         double roty2 = (
-            relx2*Math.cos(b)*Math.sin(c) + 
-            rely2*(Math.sin(a)*Math.sin(b)*Math.sin(c) + Math.cos(a)*Math.cos(c)) +
-            relz2*(Math.cos(a)*Math.sin(b)*Math.sin(c) - Math.sin(a)*Math.cos(c))
+            relx2*cos(b)*sin(c) + 
+            rely2*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
+            relz2*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c))
         );
         double rotz2 = (
-            relx2*-Math.sin(b) + 
-            rely2*Math.sin(a)*Math.cos(b) +
-            relz2*Math.cos(a)*Math.cos(b)
+            relx2*-sin(b) + 
+            rely2*sin(a)*cos(b) +
+            relz2*cos(a)*cos(b)
         );
 
         // double rotx1;
@@ -187,6 +162,7 @@ public class Line implements Drawable{
         double visy2 = rotz2 * fov / roty2;
 
         if(ID==0){
+            g.setColor(Color.RED);
             App.drawString(g, 
                 "relx1: "+relx1+"\n"+
                 "rely1: "+rely1+"\n"+
@@ -203,5 +179,6 @@ public class Line implements Drawable{
             (int) (visx2+App.width/2), 
             (int) (visy2+App.height/2)
         );
+        g.setColor(App.lineColor);
     }
 }

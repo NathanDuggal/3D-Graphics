@@ -2,22 +2,15 @@ import java.awt.Graphics;
 
 public class Point3D implements Drawable{
 
-    private final int x,y,z;
+    public final int x,y,z;
+    public final int ID;
+    private static int IDnum;
 
     public Point3D(int x, int y, int z){
         this.x=x;
         this.y=y;
         this.z=z;
-    }
-
-    public int x(){
-        return x;
-    }
-    public int y(){
-        return y;
-    }
-    public int z(){
-        return z;
+        ID=IDnum++;
     }
 
     // bad bad bad 
@@ -28,7 +21,7 @@ public class Point3D implements Drawable{
 
     @Override
     public String toString(){
-        return "( "+x+","+y+","+z+" )";
+        return "Point"+ID;
     }
 
     @Override
@@ -49,5 +42,5 @@ public class Point3D implements Drawable{
     public void draw3D(Graphics g) {
         // TODO Auto-generated method stub
         
-    }   
+    }
 }

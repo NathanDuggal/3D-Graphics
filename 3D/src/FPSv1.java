@@ -35,19 +35,20 @@ public class FPSv1 extends JFrame
   {
     main = new FPSv1();
 
-    // Transparent 16 x 16 pixel cursor image.
-    BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
+    // // Transparent 16 x 16 pixel cursor image.
+    // BufferedImage cursorImg = new BufferedImage(16, 16, BufferedImage.TYPE_INT_ARGB);
 
-    // Create a new blank cursor.
-    Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
-        cursorImg, new Point(0, 0), "blank cursor");
+    // // Create a new blank cursor.
+    // Cursor blankCursor = Toolkit.getDefaultToolkit().createCustomCursor(
+    //     cursorImg, new Point(0, 0), "blank cursor");
 
-    // Set the blank cursor to the JFrame.
-    main.getContentPane().setCursor(blankCursor);
+    // // Set the blank cursor to the JFrame.
+    // main.getContentPane().setCursor(blankCursor);
   }
 
   public static void exit(){
-    device.setFullScreenWindow(null);
+    // device.setFullScreenWindow(null);
+    main.dispose();
   }
   public static void fullScreen(){
     System.out.println("Fullscreen?");
