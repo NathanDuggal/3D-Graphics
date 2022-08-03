@@ -1,6 +1,6 @@
 import java.awt.Graphics;
 
-public class Point3D implements Drawable{
+public class Point3D implements Orientable{
 
     public final int x,y,z;
     public final int ID;
@@ -11,6 +11,23 @@ public class Point3D implements Drawable{
         this.y=y;
         this.z=z;
         ID=IDnum++;
+    }
+
+    @Override
+    public int x(){
+        return x;
+    }
+    @Override
+    public int y(){
+        return y;
+    }
+    @Override
+    public int z(){
+        return z;
+    }
+    @Override
+    public int getDist(){
+        return FPSv1.getAvgDist(this);
     }
 
     // bad bad bad 
@@ -42,5 +59,11 @@ public class Point3D implements Drawable{
     public void draw3D(Graphics g) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public int obscures(Orientable o) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

@@ -1,9 +1,9 @@
 import java.awt.Color;
 import java.awt.Graphics;
 import java.util.ArrayList;
-import static java.lang.Math.*;
+//import static java.lang.Math.*;
 
-public class Quad implements Drawable {
+public class Quad implements Orientable {
 
     private final Line[] lines;
     private final Point3D[] points;
@@ -56,6 +56,28 @@ public class Quad implements Drawable {
         return points;
     }
 
+    @Override
+    public int x(){
+        return (int) ((points[0].x + points[1].x + points[2].x + points[3].x)/4);
+    }
+
+    @Override
+    public int y(){
+        return (int) ((points[0].y + points[1].y + points[2].y + points[3].y)/4);
+    }
+
+    @Override
+    public int z(){
+        return (int) ((points[0].z + points[1].z + points[2].z + points[3].z)/4);
+    }
+
+    // Very scuffed tbh
+    @Override
+    public int getDist(){
+        return FPSv1.getAvgDist(points);
+    }
+
+
     // Doesnt work in some edge cases 
     private Point3D[] getPoints(Point3D[] points) throws Exception{
         
@@ -84,58 +106,35 @@ public class Quad implements Drawable {
             l.draw2D(g);
     }
 
+    public void draw3D(Graphics g, Color c){
+        int[] tempX = new int[4];
+        int[] tempY = new int[4];
+
+        for(int i=0; i < 4; i++){
+
+            int[] coords = FPSv1.getDisplayableCoords(points[i].x, points[i].y, points[i].z);
+    
+            // Needs to be figured out and handled better
+            if(coords.length == 0) return;
+
+            tempX[i] = coords[0];
+            tempY[i] = coords[1];
+        }
+
+        g.setColor(c);
+        g.fillPolygon(tempX, tempY, 4);
+        g.setColor(App.lineColor);
+    }
+
     @Override
     public void draw3D(Graphics g) {
+        int i=ID+1;
+        draw3D(g,new Color((i*200)%255,(i*140)%255,(i*100)%255));
+    }
 
-        int[] tempXArray = new int[4];
-        int[] tempYArray = new int[4];
-        int i=0;
-        boolean flag = false;
-
-        for(Point3D p : points){
-            double c = -App.currT();
-            double b = App.currU() * sin(App.currT());
-            double a = App.currU() * cos(App.currT());
-    
-            double fov = App.fov();
-    
-            double relx1 = p.x - App.currX();
-            double rely1 = p.y - App.currY();
-            double relz1 = p.z - App.currZ();
-
-            // double rotx1 = (relx1*cos(c) - rely1*sin(c));
-            // double roty1 = (relx1*sin(c) + rely1*cos(c));
-            // double rotx2 = (relx2*cos(c) - rely2*sin(c));
-            // double roty2 = (relx2*sin(c) + rely2*cos(c));
-    
-            double rotx1 = (
-                relx1*cos(b)*cos(c) + 
-                rely1*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c)) + 
-                relz1*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
-            );
-            double roty1 = (
-                relx1*cos(b)*sin(c) + 
-                rely1*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
-                relz1*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c))
-            );
-            double rotz1 = (
-                relx1*-sin(b) + 
-                rely1*sin(a)*cos(b) +
-                relz1*cos(a)*cos(b)
-            );
-    
-            if(roty1 > 0)
-                flag = true;
-    
-            tempXArray[i] = (int) (rotx1 * fov / roty1) + App.width/2;
-            tempYArray[i]  = (int) (rotz1 * fov / roty1) + App.height/2;
-            i++;
-        }
-
-        if(!flag){
-            g.setColor(Color.GRAY);
-            g.fillPolygon(tempXArray, tempYArray, 4);
-            g.setColor(App.lineColor);
-        }
+    @Override
+    public int obscures(Orientable o) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

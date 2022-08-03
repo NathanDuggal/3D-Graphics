@@ -2,7 +2,7 @@ import java.awt.Color;
 import java.awt.Graphics;
 import static java.lang.Math.*;
 
-public class Line implements Drawable{
+public class Line implements Orientable{
 
     private static int IDNum = 0;
 
@@ -75,9 +75,9 @@ public class Line implements Drawable{
         double a = -App.currT();
 
         double relx1 = x1 - App.currX();
-        double rely1 = z1 - App.currY();
+        double rely1 = y1 - App.currY();
         double relx2 = x2 - App.currX();
-        double rely2 = z2 - App.currY();
+        double rely2 = y2 - App.currY();
 
         double rotx1 = (relx1*cos(a) - rely1*sin(a));
         double roty1 = (relx1*sin(a) + rely1*cos(a));
@@ -96,89 +96,47 @@ public class Line implements Drawable{
 
     @Override
     public void draw3D(Graphics g) {
-        
-        double c = -App.currT();
-        double b = App.currU() * sin(App.currT());
-        double a = App.currU() * cos(App.currT());
 
-        double fov = App.fov();
+        int[] p1coords = FPSv1.getDisplayableCoords(x1, y1, z1);
+        int[] p2coords = FPSv1.getDisplayableCoords(x2, y2, z2);
 
-        double relx1 = x1 - App.currX();
-        double rely1 = y1 - App.currY();
-        double relz1 = z1 - App.currZ();
-        double relx2 = x2 - App.currX();
-        double rely2 = y2 - App.currY();
-        double relz2 = z2 - App.currZ();
-
-        // double rotx1 = (relx1*cos(c) - rely1*sin(c));
-        // double roty1 = (relx1*sin(c) + rely1*cos(c));
-        // double rotx2 = (relx2*cos(c) - rely2*sin(c));
-        // double roty2 = (relx2*sin(c) + rely2*cos(c));
-
-        double rotx1 = (
-            relx1*cos(b)*cos(c) + 
-            rely1*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c)) + 
-            relz1*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
-        );
-        double roty1 = (
-            relx1*cos(b)*sin(c) + 
-            rely1*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
-            relz1*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c))
-        );
-        double rotz1 = (
-            relx1*-sin(b) + 
-            rely1*sin(a)*cos(b) +
-            relz1*cos(a)*cos(b)
-        );
-        double rotx2 = (
-            relx2*cos(b)*cos(c) + 
-            rely2*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c)) + 
-            relz2*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
-        );
-        double roty2 = (
-            relx2*cos(b)*sin(c) + 
-            rely2*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
-            relz2*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c))
-        );
-        double rotz2 = (
-            relx2*-sin(b) + 
-            rely2*sin(a)*cos(b) +
-            relz2*cos(a)*cos(b)
-        );
-
-        // double rotx1;
-        // double roty1;
-        // double rotz1;
-        // double rotx2;
-        // double roty2;
-        // double rotz2;
-
-        if(ID != 0 && roty1 > 0 || roty2 > 0)
-            return;
-
-        double visx1 = rotx1 * fov / roty1;
-        double visy1 = rotz1 * fov / roty1;
-        double visx2 = rotx2 * fov / roty2;
-        double visy2 = rotz2 * fov / roty2;
+        // Needs to be figured out and handled better
+        if(p1coords.length == 0 || p2coords.length == 0) return;
+    
+        int visx1 = p1coords[0];
+        int visy1 = p1coords[1];
+        int visx2 = p2coords[0];
+        int visy2 = p2coords[1];
 
         if(ID==0){
             g.setColor(Color.RED);
             App.drawString(g, 
-                "relx1: "+relx1+"\n"+
-                "rely1: "+rely1+"\n"+
-                "relz1: "+relz1+"\n"+
-                "rotx1: "+rotx1+"\n"+
-                "roty1: "+roty1+"\n"+
                 "visy1: "+visy1+"\n"+
                 "visx1: "+visx1+"\n", 1000, 0);
         }
 
-        g.drawLine(
-            (int) (visx1+App.width/2), 
-            (int) (visy1+App.height/2), 
-            (int) (visx2+App.width/2), 
-            (int) (visy2+App.height/2)
-        );
+        g.drawLine(visx1,visy1,visx2,visy2);
         g.setColor(App.lineColor);
+    }
+    @Override
+    public int x() {
+        return (x1+x2)/2;
+    }
+    @Override
+    public int y() {
+        return (y1+y2)/2;
+    }
+    @Override
+    public int z() {
+        return (z1+z2)/2;
+    }
+    @Override
+    public int getDist() {
+        return FPSv1.getAvgDist(new Point3D[]{p1,p2});
+    }
+    @Override
+    public int obscures(Orientable o) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }

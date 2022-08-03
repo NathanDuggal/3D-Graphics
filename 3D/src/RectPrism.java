@@ -1,7 +1,12 @@
 import java.awt.Graphics;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
+import java.awt.Color;
 
-public class RectPrism implements Drawable{
+public class RectPrism implements Orientable{
 
     private final Point3D[] points;
     private final Quad[] faces;
@@ -74,6 +79,35 @@ public class RectPrism implements Drawable{
     }
 
     @Override
+    public int x(){
+        return x;
+    }
+    @Override
+    public int y(){
+        return y;
+    }
+    @Override
+    public int z(){
+        return z;
+    }
+
+    // Unsafe because points can be modified
+    public Quad[] faces(){
+        return faces;
+    }
+
+    // Unsafe because lines can be modified
+    public Line[] lines(){
+        return lines;
+    }
+
+    // Scuffed, needs a rewrite
+    @Override
+    public int getDist(){
+        return FPSv1.getAvgDist(points);
+    }
+
+    @Override
     public String toString(){
         return "RectPrism"+ID;
     }
@@ -86,11 +120,35 @@ public class RectPrism implements Drawable{
     }
 
 
+    // Pretty scuffed
     @Override
     public void draw3D(Graphics g) {
+
+        System.out.println("drawing rectprism");
+
+        int i=ID+1;
+
+        ArrayList<Orientable> drawables = new ArrayList<>(); //Arrays.asList(lines);
+     
         for(Line l : lines)
-            l.draw3D(g);
+            drawables.add(l);
+
         for(Quad q : faces)
-            q.draw3D(g);
+            drawables.add(q);
+
+        Collections.sort(drawables, (Orientable a, Orientable b) -> {
+            return b.getDist() - a.getDist();
+        });
+
+        for(Orientable d : drawables){
+            if(d instanceof Quad) ((Quad) d).draw3D(g, new Color((i*200)%255,(i*140)%255,(i*100)%255));
+            else d.draw3D(g);
+        }
+    }
+
+    @Override
+    public int obscures(Orientable o) {
+        // TODO Auto-generated method stub
+        return 0;
     }
 }
