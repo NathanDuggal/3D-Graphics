@@ -115,7 +115,7 @@ public class Line implements Orientable{
                 "visx1: "+visx1+"\n", 1000, 0);
         }
 
-        g.drawLine(visx1,visy1,visx2,visy2);
+        if(!(p1coords[3]==1 && p2coords[3]==1)) g.drawLine(visx1,visy1,visx2,visy2);
         g.setColor(App.lineColor);
     }
     @Override

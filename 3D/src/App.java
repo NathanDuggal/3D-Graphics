@@ -39,7 +39,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private static int frameCount = 0;
     private static double currTime;
     private static double lastTime;
-    NumberFormat formatter = new DecimalFormat("#0.00");     
+    private static NumberFormat f = new DecimalFormat("#0.00");     
 
     private BufferedImage back;
 
@@ -122,11 +122,11 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
         try{
 
-            //objs.add(new Line3D(100,200,0,300,700,0));
+            // objs.add(new Line3D(100,200,0,300,700,0));
             
-            // Line redLine = new Line(new Point3D(-10000,0,0), new Point3D(10000,0,0));
+            Line redLine = new Line(new Point3D(-10000,0,0), new Point3D(10000,0,0));
 
-            // objs.put(redLine.toString(),redLine);
+            objs.put(redLine.toString(),redLine);
 
             RectPrism originPrism = new RectPrism(0, 0, 0, 100, 100, 100);
             objs.put(originPrism.toString(), originPrism);
@@ -317,14 +317,14 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
         graphToBack.fillOval((width/2) - 5, (height/2) - 5, 10, 10);
 
-        debugStr =  "X : "+formatter.format(currX)+"\n"+
-                    "Y : "+formatter.format(currY)+"\n"+
-                    "Z : "+formatter.format(currZ)+"\n"+
-                    "T : "+formatter.format(currT)+"\n"+
-                    "U : "+formatter.format(currU * sin(currT))+"\n"+
-                    "V : "+formatter.format(currU * cos(currT))+"\n"+
-                    "Currently facing : < x: "+formatter.format(cos(currT))+", y: "+formatter.format(sin(-currT))+">\n"+
-                    "TPS : "+formatter.format((1000/(currTime-lastTime)))+"\n";
+        debugStr =  "X : "+f.format(currX)+"\n"+
+                    "Y : "+f.format(currY)+"\n"+
+                    "Z : "+f.format(currZ)+"\n"+
+                    "T : "+f.format(currT)+"\n"+
+                    "U : "+f.format(currU * sin(currT))+"\n"+
+                    "V : "+f.format(currU * cos(currT))+"\n"+
+                    "Currently facing : < x: "+f.format(cos(currU)*cos(currT))+", y: "+f.format(cos(currU)*sin(-currT))+", z: "+f.format(sin(currU))+">\n"+
+                    "TPS : "+f.format((1000/(currTime-lastTime)))+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
         drawString(graphToBack, debugStr, 10, 10);
@@ -359,10 +359,10 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         return currT;
     }
     public static double currU(){
-        return currU;
+        return currU * cos(currT);
     }
     public static double currV(){
-        return currV;
+        return currU * sin(currT);
     }
     public static int fov(){
         return fov;
@@ -431,7 +431,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     public void mouseMoved(MouseEvent e) {
 
         if(e.getX() > 0 && e.getX() < width-1 && !xReset){
-            currT += (e.getX()-lastMouseX) * PI/1000;
+            currT += (e.getX()-lastMouseX) * PI/1000;// * cos(currU);
             lastMouseX = e.getX();
         }else if(xReset){
             xReset = false;   

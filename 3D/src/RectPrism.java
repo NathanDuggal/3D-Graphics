@@ -124,7 +124,7 @@ public class RectPrism implements Orientable{
     @Override
     public void draw3D(Graphics g) {
 
-        System.out.println("drawing rectprism");
+        // System.out.println("drawing rectprism");
 
         int i=ID+1;
 

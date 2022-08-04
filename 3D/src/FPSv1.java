@@ -56,12 +56,18 @@ public class FPSv1 extends JFrame
     device.setFullScreenWindow(main);
   }
 
-  // Returns int array length 0 if coords should not be displayed
+  // Returns int[] length 0 if coords should not be displayed
   public static int[] getDisplayableCoords(int x, int y, int z){
         
-    double a = App.currT() + PI/2;
-    double b = App.currU() * cos(App.currT());
-    double c = App.currU() * sin(App.currT());
+    double a = App.currT()+ PI/2;
+    double b = App.currU();
+    double c = App.currV();
+
+    if(App.currU()>=(PI/2 - 0.00000001)){ 
+      System.out.println("here");
+      b=PI/2;
+      c=0;
+    }
 
     double fov = App.fov();
 
@@ -84,18 +90,14 @@ public class FPSv1 extends JFrame
         rely*cos(b)*sin(c) +
         relz*cos(b)*cos(b)
     );
-
-    double visx;
-    double visy;
-
+  
     // Why
-    if(roty < 0 || roty < 0)
-        return new int[0];
+    if(roty < 0) roty=1;
 
-    visx = rotx * fov / roty;
-    visy = rotz * fov / roty;
+    double visx = rotx * fov / roty;
+    double visy = rotz * fov / roty;
 
-    return new int[]{(int)visx+WIDTH/2, (int)-visy+HEIGHT/2};
+    return new int[]{(int)visx+WIDTH/2, (int)-visy+HEIGHT/2, (int) rotx, (int) roty, (int) rotz};
   }
 
   public static int getAvgDist(Point3D...points){
