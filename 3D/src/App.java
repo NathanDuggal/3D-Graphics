@@ -28,12 +28,14 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private static double currY;
     private static double currZ;
     private static double currS;
+    private static double currSens;
     // In radians
     private static double currT;
     private static double currU;
     private static double currV;
+    private static double fov;
+    private static double defFov = PI/2;
 
-    private static int fov;
     private static String debugStr = "";
 
     private static int frameCount = 0;
@@ -56,11 +58,10 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     // All non-player Objects
     private HashMap<String, Orientable> objs;
     private ArrayList<Orientable> toDraw;
-    private int dir = 1;
-    private int inc = 0;
+    private double dir = 0.5;
+    private double inc = 0;
   
     public App(){
-
         initInput();
         setBackground(fillColor);
 
@@ -95,6 +96,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         keys.put(KeyEvent.VK_SHIFT, false);
         keys.put(KeyEvent.VK_CONTROL, false);
         keys.put(KeyEvent.VK_SPACE, false);
+        keys.put(KeyEvent.VK_BACK_QUOTE, false);
 
         try{
             r = new Robot();
@@ -108,13 +110,14 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
     public void initObjs(){
 
-        currX = 0;//-200;
-        currY = 0;//250;
+        currX = -200;
+        currY = 250;
         currZ = 100;
         currT = 0;
         currU = 0;
         currV = 0;
-        currS = 5;
+        currS = 1;
+        currSens = 1;
         fov = 50;
 
         objs = new HashMap<>();
@@ -130,6 +133,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
             RectPrism originPrism = new RectPrism(0, 0, 0, 100, 100, 100);
             objs.put(originPrism.toString(), originPrism);
+
+            // RectPrism bigPrism = new RectPrism(-5000, -5000, -5000, 10000, 10000, 10000);
+            // objs.put("bigPrism",bigPrism);
 
             RectPrism rotPrism = new RectPrism(0, 0, 1000, 100, 100, 100);
             objs.put("rotPrism",rotPrism);
@@ -155,7 +161,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         // ----------------------------
 
         // Framecount check for major
-        if(frameCount%10==0 && random() < 0.25) dir*=-1;
+        if(frameCount%30==0 && random() < 0.25) dir*=-1;
         inc+=dir;
 
         objs.put("rotPrism",new RectPrism(
@@ -218,7 +224,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         }
         if(keys.get(KeyEvent.VK_S)){
             currX+=-currS*cos(currT);
-            currY+=currS*sin(currT); 
+            currY+=currS*sin(currT);
         }
         if(keys.get(KeyEvent.VK_A)){
             currX+=currS*sin(currT);
@@ -235,11 +241,11 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currZ+=currS;
         }
         if(keys.get(KeyEvent.VK_SHIFT)){
-            currS=30;
-            fov=200;
+            currS=10;
+            fov=PI;
         }else{
             currS=5;
-            fov=400;
+            fov=defFov;
         }
 
         // Debug controls
@@ -253,28 +259,28 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currV=0;
         }     
         if(keys.get(KeyEvent.VK_NUMPAD4)){
-            currT+=-PI/100;
+            currT+=-PI/500;
         }
         if(keys.get(KeyEvent.VK_NUMPAD6)){
-            currT+=PI/100;
+            currT+=PI/500;
         }
         if(keys.get(KeyEvent.VK_NUMPAD8)){
-            currU+=-(PI/100);
+            currU+=-(PI/500);
         }
         if(keys.get(KeyEvent.VK_NUMPAD2)){
-            currU+=(PI/100);
+            currU+=(PI/500);
         }
         if(keys.get(KeyEvent.VK_NUMPAD7)){
-            currV+=-(PI/100);
+            defFov+=PI/200;
         }
         if(keys.get(KeyEvent.VK_NUMPAD9)){
-            currV+=(PI/100);
+            defFov+=-PI/200;
         }
 
         // Other controls
         if(keys.get(KeyEvent.VK_ESCAPE)){
-            running = false;
-            FPSv1.exit();
+            keys.put(KeyEvent.VK_ESCAPE, false);
+            FPSv1.toggleSettings();
         }
         // if(keys.get(KeyEvent.VK_F1)){
         //     FPSv1.fullScreen();
@@ -323,7 +329,8 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
                     "T : "+f.format(currT)+"\n"+
                     "U : "+f.format(currU * sin(currT))+"\n"+
                     "V : "+f.format(currU * cos(currT))+"\n"+
-                    "Currently facing : < x: "+f.format(cos(currU)*cos(currT))+", y: "+f.format(cos(currU)*sin(-currT))+", z: "+f.format(sin(currU))+">\n"+
+                    "FOV : "+f.format(fov)+"\n"+
+                    "Currently facing : < x: "+f.format(cos(currU)*sin(currT))+", z: "+f.format(cos(currU)*cos(currT))+", y: "+f.format(sin(currU))+">\n"+
                     "TPS : "+f.format((1000/(currTime-lastTime)))+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
@@ -359,14 +366,25 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         return currT;
     }
     public static double currU(){
-        return currU * cos(currT);
+        return currU;
     }
     public static double currV(){
-        return currU * sin(currT);
+        return currU;
     }
-    public static int fov(){
+    public static double totU(){
+        return currU;
+    }
+    public static double fov(){
         return fov;
     }
+    public static int frameCount(){
+        return frameCount;
+    }
+    public static void setSens(double sens){
+        currSens = sens;
+    }
+
+
     public static void drawString(Graphics g, String text, int x, int y) {
         for (String line : text.split("\n"))
           g.drawString(line, x, y += g.getFontMetrics().getHeight());
@@ -379,6 +397,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             {
                 Thread.currentThread().sleep(1);
                 frameCount++;
+                frameCount=frameCount%Integer.MAX_VALUE;
                 lastTime=currTime;
                 currTime=System.currentTimeMillis();
                 repaint();
@@ -386,6 +405,10 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         }catch(Exception e)
         {
         }
+    }
+
+    public void close(){
+        running=false;
     }
 
     @Override
@@ -431,7 +454,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     public void mouseMoved(MouseEvent e) {
 
         if(e.getX() > 0 && e.getX() < width-1 && !xReset){
-            currT += (e.getX()-lastMouseX) * PI/1000;// * cos(currU);
+            currT += (e.getX()-lastMouseX) * PI/1000 * currSens;// * cos(currU);
             lastMouseX = e.getX();
         }else if(xReset){
             xReset = false;   
@@ -440,7 +463,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             r.mouseMove(width/2, e.getY());
         }
         if(e.getY() > 0 && e.getY() < height-1 && !yReset){
-            currU += (lastMouseY-e.getY()) * PI/1000;
+            currU += (lastMouseY-e.getY()) * PI/1000 * currSens;
             // currV += (lastMouseY-e.getY()) * PI/1000 * sin(currT);
             lastMouseY = e.getY();
         }else if(yReset){

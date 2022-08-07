@@ -99,9 +99,6 @@ public class Line implements Orientable{
 
         int[] p1coords = FPSv1.getDisplayableCoords(x1, y1, z1);
         int[] p2coords = FPSv1.getDisplayableCoords(x2, y2, z2);
-
-        // Needs to be figured out and handled better
-        if(p1coords.length == 0 || p2coords.length == 0) return;
     
         int visx1 = p1coords[0];
         int visy1 = p1coords[1];
@@ -109,12 +106,17 @@ public class Line implements Orientable{
         int visy2 = p2coords[1];
 
         if(ID==0){
-            g.setColor(Color.RED);
+            // g.setColor(Color.RED);
             App.drawString(g, 
                 "visy1: "+visy1+"\n"+
-                "visx1: "+visx1+"\n", 1000, 0);
+                "visx1: "+visx1+"\n"+
+                "rotx: "+p1coords[2]+"\n"+
+                "roty: "+p1coords[3]+"\n"+
+                "rotz: "+p1coords[4]+"\n"
+            ,1000, 0);
         }
 
+        if(p1coords[3]==1 || p2coords[3]==1) g.setColor(Color.RED);
         if(!(p1coords[3]==1 && p2coords[3]==1)) g.drawLine(visx1,visy1,visx2,visy2);
         g.setColor(App.lineColor);
     }

@@ -115,9 +115,6 @@ public class Quad implements Orientable {
         for(int i=0; i < 4; i++){
 
             int[] coords = FPSv1.getDisplayableCoords(points[i].x, points[i].y, points[i].z);
-    
-            // Needs to be figured out and handled better
-            if(coords.length == 0) return;
 
             tempX[i] = coords[0];
             tempY[i] = coords[1];
@@ -126,7 +123,8 @@ public class Quad implements Orientable {
         }
 
         g.setColor(c);
-        if(count < 3) g.fillPolygon(tempX, tempY, 4);
+        if(count>0) g.setColor(Color.RED);
+        if(count<=2) g.fillPolygon(tempX, tempY, 4);
         g.setColor(App.lineColor);
     }
 
