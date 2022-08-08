@@ -56,6 +56,8 @@ public class FPSv1 extends JFrame
 
   public static void main( String args[] )
   {
+
+    System.out.println(11.0%1);
     frame = new FPSv1();
 
     // Set the blank cursor to the JFrame.
@@ -87,7 +89,8 @@ public class FPSv1 extends JFrame
       settings.requestFocus();
     }else{
       System.out.println("Switching to app");
-      App.setSens((double)settings.getSliderVal()/100);
+      App.setSens(settings.getSliderVal("Sensitivity"));
+      App.setFOV(settings.getSliderVal("FOV"));
       content.setCursor(blankCursor);
       content.remove(settings);
       content.add(app);
@@ -133,8 +136,8 @@ public class FPSv1 extends JFrame
     if(roty < 0) roty=1;
 
     // Idk what this does exactly
-    double visx = rotx * 400 / roty;
-    double visy = rotz * 400 / roty;
+    double visx = rotx * fov / roty;
+    double visy = rotz * fov / roty;
 
     int finx = (int)visx+WIDTH/2;
     int finy = (int)-visy+HEIGHT/2;

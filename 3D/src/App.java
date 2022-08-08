@@ -34,7 +34,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private static double currU;
     private static double currV;
     private static double fov;
-    private static double defFov = PI/2;
+    private static double defFov;
 
     private static String debugStr = "";
 
@@ -118,7 +118,8 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         currV = 0;
         currS = 1;
         currSens = 1;
-        fov = 50;
+        defFov = 400;
+        fov = 400;
 
         objs = new HashMap<>();
         toDraw = new ArrayList<>();
@@ -242,7 +243,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         }
         if(keys.get(KeyEvent.VK_SHIFT)){
             currS=10;
-            fov=PI;
+            fov=defFov/2;
         }else{
             currS=5;
             fov=defFov;
@@ -382,6 +383,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     }
     public static void setSens(double sens){
         currSens = sens;
+    }
+    public static void setFOV(double fov){
+        defFov = fov;
     }
 
 

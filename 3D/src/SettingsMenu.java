@@ -3,6 +3,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import java.awt.event.*;
+import java.util.HashMap;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
@@ -10,69 +11,49 @@ import java.awt.BorderLayout;
 import java.awt.GridLayout;
 
 public class SettingsMenu extends JPanel implements KeyListener{
-    private JSlider slider;
+    private HashMap<String, SlideableSetting> settings;
     private JButton exitButton;
     private JButton saveButton;
   
     public SettingsMenu(){
         super();
-    
-        slider = new JSlider(JSlider.HORIZONTAL);
+        
         exitButton = new JButton("Exit");
-        saveButton = new JButton("Return");
-    
+        exitButton.setFont(new Font("Arial", 0, 40));
         exitButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 FPSv1.exit();
             }
         });
+        saveButton = new JButton("Return");
+        saveButton.setFont(new Font("Arial", 0, 40));
         saveButton.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
                 FPSv1.toggleSettings();
             }
         });
 
-        exitButton.setFont(new Font("Arial", 0, 40));
-        saveButton.setFont(new Font("Arial", 0, 40));
-        slider.setMinimum(10);
-        slider.setMaximum(200);
-        slider.setValue(100);
-    
+        JPanel buttonPanel = new JPanel();
+        buttonPanel.add(exitButton);
+        buttonPanel.add(saveButton);
+
         setBackground(Color.BLACK);
 
-        JPanel p1 = new JPanel(new GridLayout(2,1));
-        p1.setPreferredSize(new Dimension(FPSv1.WIDTH, 100));
+        settings = new HashMap<>();
 
-        JLabel sens = new JLabel("Sensitivity: 1.0");
-        sens.setFont(new Font("Arial", 0, 50));
-        p1.add(sens);    
+        try{
+            settings.put("Sensitivity", new SlideableSetting("Sensitivity", 0.1, 2.5, 1));
+            settings.put("FOV", new SlideableSetting("FOV", 100, 1000, 400));
+        }catch(Exception e){
+            System.out.println("Was unable to initialize setting");
+        }
 
-        slider.addChangeListener(new ChangeListener() {
-            public void stateChanged(ChangeEvent e){
-                sens.setText("Sensitivity: "+(double) slider.getValue()/100);
-            }
-        }); 
-
-        JPanel sliderP = new JPanel(new GridLayout(1,3));
-        sliderP.add(slider);
-        sliderP.add(new JPanel());
-        sliderP.add(new JPanel());
-        p1.add(sliderP);
-    
-        JPanel p2 = new JPanel();
-        p2.add(exitButton);
-        p2.add(saveButton);
-    
-        add(p1);
-        add(p2);
-
-        // add(slider);
-        // add(exitButton);
-        // add(saveButton);
+        for(SlideableSetting s : settings.values()) add(s);
+        add(buttonPanel);
     }
 
-    public int getSliderVal(){
-        return slider.getValue();
+    public double getSliderVal(String key){
+        return settings.get(key).getValue();
     }
 
     @Override
