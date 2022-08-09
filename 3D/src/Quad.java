@@ -123,6 +123,7 @@ public class Quad implements Orientable {
         }
 
         g.setColor(c);
+        // Red faces are being drawn wrong
         if(count>0) g.setColor(Color.RED);
         if(count<=2) g.fillPolygon(tempX, tempY, 4);
         g.setColor(App.lineColor);

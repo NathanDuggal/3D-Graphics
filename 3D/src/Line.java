@@ -106,7 +106,6 @@ public class Line implements Orientable{
         int visy2 = p2coords[1];
 
         if(ID==0){
-            // g.setColor(Color.RED);
             App.drawString(g, 
                 "visy1: "+visy1+"\n"+
                 "visx1: "+visx1+"\n"+
@@ -116,6 +115,7 @@ public class Line implements Orientable{
             ,1000, 0);
         }
 
+        // Red lines are drawn wrong
         if(p1coords[3]==1 || p2coords[3]==1) g.setColor(Color.RED);
         if(!(p1coords[3]==1 && p2coords[3]==1)) g.drawLine(visx1,visy1,visx2,visy2);
         g.setColor(App.lineColor);

@@ -219,27 +219,30 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         // ----------------------------
 
         // Movement controls
+
+        // Camera aligns with Z-axis at currT=0
+
         if(keys.get(KeyEvent.VK_W)){
-            currX+=currS*cos(currT);
-            currY+=-currS*sin(currT);
+            currZ+=currS*cos(currT);
+            currX+=currS*sin(currT);
         }
         if(keys.get(KeyEvent.VK_S)){
-            currX+=-currS*cos(currT);
-            currY+=currS*sin(currT);
+            currZ+=-currS*cos(currT);
+            currX+=-currS*sin(currT);
         }
         if(keys.get(KeyEvent.VK_A)){
-            currX+=currS*sin(currT);
-            currY+=currS*cos(currT);
+            currZ+=currS*cos(currT-PI/2);
+            currX+=currS*sin(currT-PI/2);
         }
         if(keys.get(KeyEvent.VK_D)){
-            currX+=-currS*sin(currT);
-            currY+=-currS*cos(currT);
+            currZ+=currS*cos(currT-PI/2);
+            currX+=currS*sin(currT-PI/2);
         }
         if(keys.get(KeyEvent.VK_CONTROL)){
-            currZ+=-currS;
+            currY+=-currS;
         }
         if(keys.get(KeyEvent.VK_SPACE)){
-            currZ+=currS;
+            currY+=currS;
         }
         if(keys.get(KeyEvent.VK_SHIFT)){
             currS=10;
@@ -457,26 +460,26 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     @Override
     public void mouseMoved(MouseEvent e) {
 
-        if(e.getX() > 0 && e.getX() < width-1 && !xReset){
-            currT += (e.getX()-lastMouseX) * PI/1000 * currSens;// * cos(currU);
-            lastMouseX = e.getX();
-        }else if(xReset){
-            xReset = false;   
-        }else {
-            lastMouseX = width/2 + (lastMouseX-e.getX());
-            r.mouseMove(width/2, e.getY());
-        }
-        if(e.getY() > 0 && e.getY() < height-1 && !yReset){
-            currU += (lastMouseY-e.getY()) * PI/1000 * currSens;
-            // currV += (lastMouseY-e.getY()) * PI/1000 * sin(currT);
-            lastMouseY = e.getY();
-        }else if(yReset){
-            yReset = false;
-        }else{
-            yReset = true;
-            lastMouseY = height/2 + (lastMouseY-e.getY());
-            r.mouseMove(e.getX(), height/2);
-        }
+        // if(e.getX() > 0 && e.getX() < width-1 && !xReset){
+        //     currT += (e.getX()-lastMouseX) * PI/1000 * currSens;// * cos(currU);
+        //     lastMouseX = e.getX();
+        // }else if(xReset){
+        //     xReset = false;   
+        // }else {
+        //     lastMouseX = width/2 + (lastMouseX-e.getX());
+        //     r.mouseMove(width/2, e.getY());
+        // }
+        // if(e.getY() > 0 && e.getY() < height-1 && !yReset){
+        //     currU += (lastMouseY-e.getY()) * PI/1000 * currSens;
+        //     // currV += (lastMouseY-e.getY()) * PI/1000 * sin(currT);
+        //     lastMouseY = e.getY();
+        // }else if(yReset){
+        //     yReset = false;
+        // }else{
+        //     yReset = true;
+        //     lastMouseY = height/2 + (lastMouseY-e.getY());
+        //     r.mouseMove(e.getX(), height/2);
+        // }
 
         // if(FPSv1.main.isFocused()) r.mouseMove(width/2,height/2);
     }

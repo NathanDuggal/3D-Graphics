@@ -56,8 +56,6 @@ public class FPSv1 extends JFrame
 
   public static void main( String args[] )
   {
-
-    System.out.println(11.0%1);
     frame = new FPSv1();
 
     // Set the blank cursor to the JFrame.
@@ -100,15 +98,13 @@ public class FPSv1 extends JFrame
 
   // Maps a point in space to where it should appear on the screen
   public static int[] getDisplayableCoords(int x, int y, int z){
-        
-    double a = App.currT() + PI/2;
-    double b = App.currU() * cos(App.currT());
-    double c = App.currU() * sin(App.currT());
-
-    // if(App.totU()>=(PI/2 - 0.01)){ 
-    //   // System.out.println("here");
-    //   a=PI/2;
-    // }
+    
+    // Z-axis (initially facing into camera)
+    double a = 0;
+    // Y-axis (vertical) negative because we are flipping the screen upside down later
+    double b = -App.currT() + PI/2;
+    // X-axis (parallel to bottom of screen)
+    double c = App.currU();
 
     double fov = App.fov();
 
@@ -133,17 +129,18 @@ public class FPSv1 extends JFrame
     );
   
     // Why
-    if(roty < 0) roty=1;
+    if(rotz < 0) rotz=1;
 
     // Idk what this does exactly
-    double visx = rotx * fov / roty;
-    double visy = rotz * fov / roty;
+    double visx = rotx * fov / rotz;
+    double visy = roty * fov / rotz;
 
     int finx = (int)visx+WIDTH/2;
+    // negative to flip account for y being down in swing window
     int finy = (int)-visy+HEIGHT/2;
 
     // return new int[]{(int)(visx*WIDTH/2)+WIDTH/2, (int)(-visy*HEIGHT/2)+HEIGHT/2, (int) rotx, (int) roty, (int) rotz};
-    return new int[]{finx, finy, (int) rotx, (int) roty, (int) rotz};
+    return new int[]{finx, finy, (int) rotx, (int) rotz, (int) roty};
   }
 
   public static int getAvgDist(Point3D...points){

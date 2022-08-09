@@ -16,7 +16,7 @@ public class RectPrism implements Orientable{
     private static int IDnum;
 
     // Ez init?
-    public RectPrism(int x, int y, int z, int l, int w, int h, RectPrism o){
+    public RectPrism(int x, int z, int y, int l, int w, int h, RectPrism o){
 
         if(o != null){
             this.x=x+o.x;
@@ -32,14 +32,14 @@ public class RectPrism implements Orientable{
             new Point3D(x, y, z),
 
             new Point3D(x+l, y, z),
-            new Point3D(x, y+w, z),
-            new Point3D(x, y, z+h),
+            new Point3D(x, y+h, z),
+            new Point3D(x, y, z+w),
 
-            new Point3D(x+l, y+w, z),
-            new Point3D(x, y+w, z+h),
-            new Point3D(x+l, y, z+h),
+            new Point3D(x+l, y+h, z),
+            new Point3D(x, y+h, z+w),
+            new Point3D(x+l, y, z+w),
 
-            new Point3D(x+l, y+w, z+h)
+            new Point3D(x+l, y+h, z+w)
         };
         faces = new Quad[6];
         try{
