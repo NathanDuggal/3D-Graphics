@@ -230,13 +230,14 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             currZ+=-currS*cos(currT);
             currX+=-currS*sin(currT);
         }
+        // Should be +PI/2 not sure why -PI/2 works?
         if(keys.get(KeyEvent.VK_A)){
             currZ+=currS*cos(currT-PI/2);
             currX+=currS*sin(currT-PI/2);
         }
         if(keys.get(KeyEvent.VK_D)){
-            currZ+=currS*cos(currT-PI/2);
-            currX+=currS*sin(currT-PI/2);
+            currZ+=-currS*cos(currT-PI/2);
+            currX+=-currS*sin(currT-PI/2);
         }
         if(keys.get(KeyEvent.VK_CONTROL)){
             currY+=-currS;
