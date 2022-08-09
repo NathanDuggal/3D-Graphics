@@ -102,7 +102,7 @@ public class FPSv1 extends JFrame
     // Z-axis (initially facing into camera)
     double a = 0;
     // Y-axis (vertical) negative because we are flipping the screen upside down later
-    double b = -App.currT() + PI/2;
+    double b = -App.currT();
     // X-axis (parallel to bottom of screen)
     double c = App.currU();
 
