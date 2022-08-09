@@ -50,10 +50,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
     // To fascilitate mouse controls
     private Robot r;
-    private boolean xReset;
-    private boolean yReset;
-    private static int lastMouseX = 0;
-    private static int lastMouseY = 0;
+    private boolean mReset;
 
     // All non-player Objects
     private HashMap<String, Orientable> objs;
@@ -103,8 +100,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         }catch(Exception e){
             System.out.println("Robot init failed");
         }
-        xReset=false;
-        yReset=false;
+        mReset=false;
         //r.mouseMove(width/2, height/2);
     }
 
@@ -457,25 +453,13 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     @Override
     public void mouseMoved(MouseEvent e) {
 
-        if(e.getX() > 0 && e.getX() < width-1 && !xReset){
-            currT += (e.getX()-lastMouseX) * PI/1000 * currSens;// * cos(currU);
-            lastMouseX = e.getX();
-        }else if(xReset){
-            xReset = false;   
-        }else {
-            lastMouseX = width/2 + (lastMouseX-e.getX());
-            r.mouseMove(width/2, e.getY());
-        }
-        if(e.getY() > 0 && e.getY() < height-1 && !yReset){
-            currU += (lastMouseY-e.getY()) * PI/1000 * currSens;
-            // currV += (lastMouseY-e.getY()) * PI/1000 * sin(currT);
-            lastMouseY = e.getY();
-        }else if(yReset){
-            yReset = false;
+        if(!mReset){
+            currU += (height/2-e.getY()) * PI/1000 * currSens;
+            currT += (e.getX()-width/2) * PI/1000 * currSens;
+            mReset=true;
+            r.mouseMove(width/2,height/2);
         }else{
-            yReset = true;
-            lastMouseY = height/2 + (lastMouseY-e.getY());
-            r.mouseMove(e.getX(), height/2);
+            mReset=false;
         }
 
         // if(FPSv1.main.isFocused()) r.mouseMove(width/2,height/2);
