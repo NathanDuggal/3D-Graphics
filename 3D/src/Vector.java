@@ -1,28 +1,38 @@
 import java.awt.Graphics;
+import static java.lang.Math.*;
 
-public class Point3D implements Orientable{
+public class Vector implements Orientable{
 
-    public final int x,y,z;
+    public final double x,y,z;
     public final int ID;
     private static int IDnum;
 
-    public Point3D(int x, int y, int z){
+    public Vector(double x, double y, double z){
         this.x=x;
         this.y=y;
         this.z=z;
         ID=IDnum++;
     }
 
+    public Vector getUnit(){
+        double m = getMag();
+        return new Vector(x/m,y/m,z/m);
+    }
+
+    public double getMag(){
+        return sqrt(x*x+y*y+z*z);
+    }
+
     @Override
-    public int x(){
+    public double x(){
         return x;
     }
     @Override
-    public int y(){
+    public double y(){
         return y;
     }
     @Override
-    public int z(){
+    public double z(){
         return z;
     }
     @Override
@@ -49,9 +59,9 @@ public class Point3D implements Orientable{
 
     @Override
     public boolean equals(Object o){
-        if(o==null || !(o instanceof Point3D))
+        if(o==null || !(o instanceof Vector))
             return false;
-        Point3D p = (Point3D) o;
+        Vector p = (Vector) o;
         return x==p.x && y==p.y && z==p.z;
     }
 

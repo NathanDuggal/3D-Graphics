@@ -6,7 +6,7 @@ import java.util.ArrayList;
 public class Quad implements Orientable {
 
     private final Line[] lines;
-    private final Point3D[] points;
+    private final Vector[] points;
     private final int ID;
     private static int IDnum;
 
@@ -24,13 +24,13 @@ public class Quad implements Orientable {
         
         // make sure all points work
         // points = getPoints(tempPoints);
-        points = new Point3D[]{};
+        points = new Vector[]{};
         ID=IDnum++;
     }
 
     // Way better
-    public Quad(Point3D p1, Point3D p2, Point3D p3, Point3D p4) throws ExceptionInInitializerError, Exception{
-        points = new Point3D[]{ p1,p2,p3,p4 };
+    public Quad(Vector p1, Vector p2, Vector p3, Vector p4) throws ExceptionInInitializerError, Exception{
+        points = new Vector[]{ p1,p2,p3,p4 };
 
         // make sure no duplicate points
         for(int i=0; i<points.length; i++){
@@ -52,23 +52,23 @@ public class Quad implements Orientable {
         return lines;
     }
 
-    public Point3D[] points(){
+    public Vector[] points(){
         return points;
     }
 
     @Override
-    public int x(){
-        return (int) ((points[0].x + points[1].x + points[2].x + points[3].x)/4);
+    public double x(){
+        return (points[0].x + points[1].x + points[2].x + points[3].x)/4;
     }
 
     @Override
-    public int y(){
-        return (int) ((points[0].y + points[1].y + points[2].y + points[3].y)/4);
+    public double y(){
+        return (points[0].y + points[1].y + points[2].y + points[3].y)/4;
     }
 
     @Override
-    public int z(){
-        return (int) ((points[0].z + points[1].z + points[2].z + points[3].z)/4);
+    public double z(){
+        return (points[0].z + points[1].z + points[2].z + points[3].z)/4;
     }
 
     // Very scuffed tbh
@@ -79,11 +79,11 @@ public class Quad implements Orientable {
 
 
     // Doesnt work in some edge cases 
-    private Point3D[] getPoints(Point3D[] points) throws Exception{
+    private Vector[] getPoints(Vector[] points) throws Exception{
         
-        Point3D[] endPoints = new Point3D[4];
+        Vector[] endPoints = new Vector[4];
 
-        for(Point3D p : points){
+        for(Vector p : points){
             int s=0;
             for(Line l : lines){
                 if(l.containsPoint(p)) s++;

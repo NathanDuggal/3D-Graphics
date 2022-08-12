@@ -128,7 +128,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
             // objs.add(new Line3D(100,200,0,300,700,0));
             
-            Line redLine = new Line(new Point3D(-10000,0,0), new Point3D(10000,0,0));
+            Line redLine = new Line(new Vector(-10000,0,0), new Vector(10000,0,0));
 
             objs.put(redLine.toString(),redLine);
 
@@ -335,7 +335,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
                     "U : "+f.format(currU * sin(currT))+"\n"+
                     "V : "+f.format(currU * cos(currT))+"\n"+
                     "FOV : "+f.format(fov)+"\n"+
-                    "Currently facing : < x: "+f.format(cos(currU)*sin(currT))+", z: "+f.format(cos(currU)*cos(currT))+", y: "+f.format(sin(currU))+">\n"+
+                    "Currently facing : < x: "+f.format(currDir().x)+", y: "+f.format(currDir().y)+", z: "+f.format(currDir().z)+">\n"+
                     "TPS : "+f.format((1000/(currTime-lastTime)))+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
@@ -390,6 +390,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     }
     public static void setFOV(double fov){
         defFov = fov;
+    }
+    public static Vector currDir(){
+        return new Vector(cos(currU)*sin(currT), sin(currU), cos(currU)*cos(currT));
     }
 
 

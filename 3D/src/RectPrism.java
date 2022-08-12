@@ -8,7 +8,7 @@ import java.awt.Color;
 
 public class RectPrism implements Orientable{
 
-    private final Point3D[] points;
+    private final Vector[] points;
     private final Quad[] faces;
     private final Line[] lines;
     private final int x,y,z;
@@ -28,18 +28,18 @@ public class RectPrism implements Orientable{
             this.z=z;
         }
 
-        points = new Point3D[]{
-            new Point3D(x, y, z),
+        points = new Vector[]{
+            new Vector(x, y, z),
 
-            new Point3D(x+l, y, z),
-            new Point3D(x, y+h, z),
-            new Point3D(x, y, z+w),
+            new Vector(x+l, y, z),
+            new Vector(x, y+h, z),
+            new Vector(x, y, z+w),
 
-            new Point3D(x+l, y+h, z),
-            new Point3D(x, y+h, z+w),
-            new Point3D(x+l, y, z+w),
+            new Vector(x+l, y+h, z),
+            new Vector(x, y+h, z+w),
+            new Vector(x+l, y, z+w),
 
-            new Point3D(x+l, y+h, z+w)
+            new Vector(x+l, y+h, z+w)
         };
         faces = new Quad[6];
         try{
@@ -79,15 +79,15 @@ public class RectPrism implements Orientable{
     }
 
     @Override
-    public int x(){
+    public double x(){
         return x;
     }
     @Override
-    public int y(){
+    public double y(){
         return y;
     }
     @Override
-    public int z(){
+    public double z(){
         return z;
     }
 

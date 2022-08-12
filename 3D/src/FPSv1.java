@@ -97,7 +97,7 @@ public class FPSv1 extends JFrame
   }
 
   // Maps a point in space to where it should appear on the screen
-  public static int[] getDisplayableCoords(int x, int y, int z){
+  public static int[] getDisplayableCoords(double x, double y, double z){
     
     // Z-axis (initially facing into camera)
     double a = 0;
@@ -112,21 +112,44 @@ public class FPSv1 extends JFrame
     double rely = y - App.currY();
     double relz = z - App.currZ();
 
-    double rotx = (
-        relx*cos(a)*cos(b) + 
-        rely*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c)) + 
-        relz*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
-    );
-    double roty = (
-        relx*sin(a)*cos(b) + 
-        rely*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
-        relz*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c))
-    );
-    double rotz = (
-        relx*-sin(b) + 
-        rely*cos(b)*sin(c) +
-        relz*cos(b)*cos(b)
-    );
+    Quaternion point = new Quaternion(0, relx, rely, relz);
+
+    Quaternion yaw = new Quaternion(new Vector(0, 1, 0), b);
+    Quaternion pitch = new Quaternion(new Vector(App.currDir().z, 0, App.currDir().x), c);
+  
+    // Rotate by "global" yaw
+    point = yaw.getInverse().multiply(point).multiply(yaw);
+
+    // Rotate by "local" pitch
+    point = pitch.getInverse().multiply(point).multiply(pitch);
+
+    Vector rotPoint;
+    try{
+      rotPoint = point.asVector();
+    }catch(Exception e){
+      if(App.frameCount()%100 == 0)System.out.println("R was not 0");
+      rotPoint = new Vector(0, 0, 0);
+    }
+
+    double rotx = rotPoint.x;
+    double roty = rotPoint.y;
+    double rotz = rotPoint.z;
+
+    // double rotx = (
+    //     relx*cos(a)*cos(b) + 
+    //     rely*(cos(a)*sin(b)*sin(c) - sin(a)*cos(c)) + 
+    //     relz*(cos(a)*sin(b)*cos(c) + sin(a)*sin(c))
+    // );
+    // double roty = (
+    //     relx*sin(a)*cos(b) + 
+    //     rely*(sin(a)*sin(b)*sin(c) + cos(a)*cos(c)) +
+    //     relz*(sin(a)*sin(b)*cos(c) - cos(a)*sin(c))
+    // );
+    // double rotz = (
+    //     relx*-sin(b) + 
+    //     rely*cos(b)*sin(c) +
+    //     relz*cos(b)*cos(b)
+    // );
   
     // Why
     if(rotz < 0) rotz=1;
@@ -143,12 +166,12 @@ public class FPSv1 extends JFrame
     return new int[]{finx, finy, (int) rotx, (int) rotz, (int) roty};
   }
 
-  public static int getAvgDist(Point3D...points){
+  public static int getAvgDist(Vector...points){
     int totX = 0;
     int totY = 0;
     int totZ = 0;
 
-    for(Point3D p : points){
+    for(Vector p : points){
       totX+=p.x;
       totY+=p.y;
       totZ+=p.z;

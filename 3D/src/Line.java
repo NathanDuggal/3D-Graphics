@@ -7,8 +7,8 @@ public class Line implements Orientable{
     private static int IDNum = 0;
 
     public final int ID;
-    public final int x1,y1,z1,x2,y2,z2;
-    public final Point3D p1,p2;
+    public final double x1,y1,z1,x2,y2,z2;
+    public final Vector p1,p2;
     public Line(int x1, int y1, int z1, int x2,int y2, int z2) throws Exception{
         this.x1=x1;
         this.y1=y1;
@@ -16,12 +16,12 @@ public class Line implements Orientable{
         this.x2=x2;
         this.y2=y2;
         this.z2=z2;
-        p1=new Point3D(x1,y1,z1);
-        p2=new Point3D(x2,y2,z2);
+        p1=new Vector(x1,y1,z1);
+        p2=new Vector(x2,y2,z2);
         checkPoints();
         ID=IDNum++;
     }
-    public Line(Point3D p1, Point3D p2) throws Exception{
+    public Line(Vector p1, Vector p2) throws Exception{
         this.p1=p1;
         this.p2=p2;
         x1=p1.x;
@@ -34,7 +34,7 @@ public class Line implements Orientable{
         ID=IDNum++;
     }
 
-    public boolean containsPoint(Point3D p){
+    public boolean containsPoint(Vector p){
         return p1.equals(p) || p2.equals(p);
     }
 
@@ -121,20 +121,20 @@ public class Line implements Orientable{
         g.setColor(App.lineColor);
     }
     @Override
-    public int x() {
+    public double x() {
         return (x1+x2)/2;
     }
     @Override
-    public int y() {
+    public double y() {
         return (y1+y2)/2;
     }
     @Override
-    public int z() {
+    public double z() {
         return (z1+z2)/2;
     }
     @Override
     public int getDist() {
-        return FPSv1.getAvgDist(new Point3D[]{p1,p2});
+        return FPSv1.getAvgDist(new Vector[]{p1,p2});
     }
     @Override
     public int obscures(Orientable o) {
