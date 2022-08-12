@@ -1,5 +1,7 @@
 import static java.lang.Math.*;
 
+import java.text.NumberFormat;
+
 public class Quaternion extends Vector {
 
     public final double r;
@@ -23,17 +25,22 @@ public class Quaternion extends Vector {
         return new Quaternion(r, -x, -y, -z);
     }
 
-    public Vector asVector() throws Exception{
-        if(r != 0) throw new Exception();
+    public Vector asVector() {
+        // if(r != 0) throw new Exception();
         return new Vector(x, y, z);
     }
 
     public Quaternion multiply(Quaternion q){
         return new Quaternion(
             r*q.r-x*q.x-y*q.y-z*q.z,
-            r*q.x-x*q.r-y*q.z-z*q.y,
-            r*q.y-x*q.z-y*q.r-z*q.x,
-            r*q.z-x*q.y-y*q.x-z*q.r
+            r*q.x+x*q.r-y*q.z+z*q.y,
+            r*q.y+x*q.z+y*q.r-z*q.x,
+            r*q.z-x*q.y+y*q.x+z*q.r
         );
+    }
+
+    public String toString(){
+        NumberFormat f = App.f;
+        return "< r: "+f.format(r)+" x: "+f.format(x)+" y: "+f.format(y)+" z: "+f.format(z)+" > ";
     }
 }

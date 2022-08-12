@@ -32,6 +32,8 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     // In radians
     private static double currT;
     private static double currU;
+    private static Quaternion yaw;
+    private static Quaternion pitch;
     private static double currV;
     private static double fov;
     private static double defFov;
@@ -41,7 +43,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private static int frameCount = 0;
     private static double currTime;
     private static double lastTime;
-    private static NumberFormat f = new DecimalFormat("#0.00");     
+    public static NumberFormat f = new DecimalFormat("#0.00");     
 
     private BufferedImage back;
 
@@ -121,6 +123,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         defFov = 400;
         fov = 400;
 
+        yaw = new Quaternion(new Vector(0, 1, 0));
+        pitch = new Quaternion(new Vector(currDir().z, 0, currDir().x));
+
         objs = new HashMap<>();
         toDraw = new ArrayList<>();
 
@@ -174,6 +179,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             100, 
             (RectPrism)objs.get("rotPrism")
         ));
+
+        yaw = new Quaternion(new Vector(0, 1, 0), -currT);
+        pitch = new Quaternion(new Vector(currDir().z, 0, -currDir().x), currU);
 
         // ----------------------------
         // Get Ordered List To Draw ---
@@ -336,6 +344,8 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
                     "V : "+f.format(currU * cos(currT))+"\n"+
                     "FOV : "+f.format(fov)+"\n"+
                     "Currently facing : < x: "+f.format(currDir().x)+", y: "+f.format(currDir().y)+", z: "+f.format(currDir().z)+">\n"+
+                    "yaw: "+yaw+"\n"+
+                    "pitch: "+pitch+"\n"+
                     "TPS : "+f.format((1000/(currTime-lastTime)))+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
@@ -393,6 +403,12 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     }
     public static Vector currDir(){
         return new Vector(cos(currU)*sin(currT), sin(currU), cos(currU)*cos(currT));
+    }
+    public static Quaternion yaw(){
+        return yaw;
+    }
+    public static Quaternion pitch(){
+        return pitch;
     }
 
 

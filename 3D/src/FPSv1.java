@@ -102,7 +102,7 @@ public class FPSv1 extends JFrame
     // Z-axis (initially facing into camera)
     double a = 0;
     // Y-axis (vertical) negative because we are flipping the screen upside down later
-    double b = -App.currT();
+    double b = App.currT();
     // X-axis (parallel to bottom of screen)
     double c = App.currU();
 
@@ -114,14 +114,16 @@ public class FPSv1 extends JFrame
 
     Quaternion point = new Quaternion(0, relx, rely, relz);
 
-    Quaternion yaw = new Quaternion(new Vector(0, 1, 0), b);
-    Quaternion pitch = new Quaternion(new Vector(App.currDir().z, 0, App.currDir().x), c);
+    Quaternion yaw = App.yaw();
+    Quaternion pitch = App.pitch();
   
     // Rotate by "global" yaw
-    point = yaw.getInverse().multiply(point).multiply(yaw);
+    // point = yaw.getInverse().multiply(point).multiply(yaw);
+    point = yaw.multiply(point).multiply(yaw.getInverse());
 
     // Rotate by "local" pitch
-    point = pitch.getInverse().multiply(point).multiply(pitch);
+    // point = pitch.getInverse().multiply(point).multiply(pitch);
+    point = pitch.multiply(point).multiply(pitch.getInverse());
 
     Vector rotPoint;
     try{
