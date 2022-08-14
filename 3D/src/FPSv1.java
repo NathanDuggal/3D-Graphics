@@ -116,14 +116,18 @@ public class FPSv1 extends JFrame
 
     Quaternion yaw = App.yaw();
     Quaternion pitch = App.pitch();
+    Quaternion pitch2 = App.pitch2();
   
     // Rotate by "global" yaw
-    // point = yaw.getInverse().multiply(point).multiply(yaw);
-    point = yaw.multiply(point).multiply(yaw.getInverse());
+    point = yaw.getInverse().multiply(point).multiply(yaw);
+    // point = yaw.multiply(point).multiply(yaw.getInverse());
 
     // Rotate by "local" pitch
-    // point = pitch.getInverse().multiply(point).multiply(pitch);
-    point = pitch.multiply(point).multiply(pitch.getInverse());
+    point = pitch.getInverse().multiply(point).multiply(pitch);
+    // point = pitch.multiply(point).multiply(pitch.getInverse());
+
+    // Rotate by pitch again???
+    point = pitch2.getInverse().multiply(point).multiply(pitch2);
 
     Vector rotPoint;
     try{

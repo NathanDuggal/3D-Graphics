@@ -16,7 +16,7 @@ public class RectPrism implements Orientable{
     private static int IDnum;
 
     // Ez init?
-    public RectPrism(int x, int z, int y, int l, int w, int h, RectPrism o){
+    public RectPrism(int x, int y, int z, int l, int w, int h, RectPrism o){
 
         if(o != null){
             this.x=x+o.x;

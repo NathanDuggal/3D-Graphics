@@ -48,7 +48,7 @@ public class Vector implements Orientable{
 
     @Override
     public String toString(){
-        return "Point"+ID;
+        return "< "+x+" "+y+" "+z+" > ";
     }
 
     @Override

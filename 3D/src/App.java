@@ -34,6 +34,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     private static double currU;
     private static Quaternion yaw;
     private static Quaternion pitch;
+    private static Quaternion pitch2;
+    private static Vector yawX;
+    private static Vector pitchX;
     private static double currV;
     private static double fov;
     private static double defFov;
@@ -149,7 +152,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
             for(int i=0; i < 8; i++){
 
                 RectPrism rp1 = new RectPrism(i*150, 0, 0, 50, 50, 500);
-                RectPrism rp2 = new RectPrism(i*150, 500, 0, 50, 50, 500);
+                RectPrism rp2 = new RectPrism(i*150, 0, 500, 50, 50, 500);
 
                 objs.put(rp1.toString(), rp1);
                 objs.put(rp2.toString(), rp2);
@@ -172,8 +175,8 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
         objs.put("rotPrism",new RectPrism(
             (int) (500*cos(inc*PI/200)), 
-            (int) (500*sin(inc*PI/200)), 
-            1000, 
+            1000,
+            (int) (500*sin(inc*PI/200)),
             100, 
             100, 
             100, 
@@ -181,7 +184,10 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
         ));
 
         yaw = new Quaternion(new Vector(0, 1, 0), -currT);
-        pitch = new Quaternion(new Vector(currDir().z, 0, -currDir().x), currU);
+        pitch = new Quaternion( new Vector(sin(currT), 0, cos(currT)), sin(currT)*-currU);
+        pitch2 = new Quaternion( new Vector(cos(currT), 0, -sin(currT)), cos(currT)*-currU);
+        pitchX = new Vector(sin(currT), 0, -cos(currT));
+        // return new Vector(cos(currU)*sin(currT), sin(currU), cos(currU)*cos(currT));
 
         // ----------------------------
         // Get Ordered List To Draw ---
@@ -230,22 +236,24 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
 
         // Camera aligns with Z-axis at currT=0
 
+        // Uses the x and z component of currDir minus the currU adjust
+        // return new Vector(cos(currU)*sin(currT), sin(currU), cos(currU)*cos(currT));
         if(keys.get(KeyEvent.VK_W)){
-            currZ+=currS*cos(currT);
-            currX+=currS*sin(currT);
+            currX+=sin(currT) * currS;
+            currZ+=cos(currT) * currS;
         }
         if(keys.get(KeyEvent.VK_S)){
-            currZ+=-currS*cos(currT);
-            currX+=-currS*sin(currT);
+            currX+=-sin(currT) * currS;
+            currZ+=-cos(currT) * currS;
         }
-        // Should be +PI/2 not sure why -PI/2 works?
+        // A and D are reversed (due to screen flip?)
         if(keys.get(KeyEvent.VK_A)){
-            currZ+=currS*cos(currT-PI/2);
-            currX+=currS*sin(currT-PI/2);
+            currX+=-cos(currT) * currS;
+            currZ+=sin(currT) * currS;
         }
         if(keys.get(KeyEvent.VK_D)){
-            currZ+=-currS*cos(currT-PI/2);
-            currX+=-currS*sin(currT-PI/2);
+            currX+=cos(currT) * currS;
+            currZ+=-sin(currT) * currS;
         }
         if(keys.get(KeyEvent.VK_CONTROL)){
             currY+=-currS;
@@ -345,7 +353,7 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
                     "FOV : "+f.format(fov)+"\n"+
                     "Currently facing : < x: "+f.format(currDir().x)+", y: "+f.format(currDir().y)+", z: "+f.format(currDir().z)+">\n"+
                     "yaw: "+yaw+"\n"+
-                    "pitch: "+pitch+"\n"+
+                    "pitch: "+pitchX+"\n"+
                     "TPS : "+f.format((1000/(currTime-lastTime)))+"\n";
 
         graphToBack.setFont(new Font("Dialog",0,30));
@@ -409,6 +417,9 @@ public class App extends Canvas implements MouseInputListener, KeyListener, Runn
     }
     public static Quaternion pitch(){
         return pitch;
+    }
+    public static Quaternion pitch2(){
+        return pitch2;
     }
 
 
